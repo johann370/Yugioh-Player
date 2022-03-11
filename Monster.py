@@ -1,15 +1,13 @@
 from Card import Card
+from Summon import summon
 
 
 class Monster(Card):
-    def __init__(self, name, attack, defense, position, level, monsterType, attribute):
+    def __init__(self, name, attack, defense, level, monsterType, attribute):
         super().__init__(name, "monster")
-        self.attack = attack
         self.defense = defense
-        self.position = position
+        self.position = None
         self.level = level
         self.monsterType = monsterType
         self.attribute = attribute
-
-    def attack(target):
-        pass
+        self.options = ['Normal Summon', 'Set']
