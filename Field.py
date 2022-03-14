@@ -10,10 +10,25 @@ class Field:
 
     def __str__(self) -> str:
         string = ''
-        for monster in self.p1MonsterZone:
-            if monster is None:
+
+        for monster in self.p2MonsterZone:
+            if (monster is None):
                 string += ' | None'
-            else:
+            elif (monster.faceUp):
                 string += ' | ' + monster.name + ' (' + monster.position + ')'
+            else:
+                string += ' | Face Down Monster' + \
+                    ' (' + monster.position + ')'
+
+        string += '\n-------------------------------------------------------\n'
+
+        for monster in self.p1MonsterZone:
+            if (monster is None):
+                string += ' | None'
+            elif (monster.faceUp):
+                string += ' | ' + monster.name + ' (' + monster.position + ')'
+            else:
+                string += ' | Face Down Monster' + \
+                    ' (' + monster.position + ')'
 
         return string

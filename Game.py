@@ -19,7 +19,8 @@ class Game():
     def test(self):
         self.p1.deck.draw(2)
         self.p2.deck.draw(5)
-        self.turn(self.p1)
+        summon('normal', self.p2.hand.cards[0], 0, self.p2, self.field)
+        summon('set', self.p1.hand.cards[0], 0, self.p1, self.field)
         print(self.field)
 
     def startGame(self):
@@ -62,7 +63,17 @@ class Game():
         pass
 
     def mainPhase2(self, player):
-        pass
+        print('-1. Next phase')
+        for i in range(len(player.hand.cards)):
+            print(f'{i}. {player.hand.cards[i].name}')
+        val = int(input('Choose a card: '))
+        while(val >= 0):
+            card = player.hand.cards[val]
+            self.chooseCard(card, player)
+            print('-1. Next phase')
+            for i in range(len(player.hand.cards)):
+                print(f'{i}. {player.hand.cards[i].name}')
+            val = int(input('Choose a card: '))
 
     def endPhase(self, player):
         pass
