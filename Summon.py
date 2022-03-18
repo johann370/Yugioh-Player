@@ -29,7 +29,7 @@ def set(monster, zone, player, field):
     else:
         player.hand.cards.remove(monster)
         monster.position = 'defense'
-        monster.faceUp = True
+        monster.faceUp = False
         field.p2MonsterZone[zone] = monster
 
 

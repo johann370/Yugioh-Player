@@ -3,4 +3,10 @@ class Card:
         self.name = name
         self.cardType = cardType
         self.faceUp = None
+        self.owner = None
+        self.currentOwner = None
         self.options = []
+
+    def setOwner(self, owner):
+        self.owner = owner
+        self.currentOwner = self.owner

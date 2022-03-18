@@ -2,14 +2,16 @@ from Field import Field
 from Monster import Monster
 from Player import Player
 from Summon import summon
+from Mechanics import destroy
 
 
 class Game():
     field = Field()
     card = Monster('Gem-Knight Garnet', 1900, 0,
                    4, 'Pyro/Normal', 'Earth')
+    card2 = Monster('Test', 2000, 1900, 4, 'Pyro/Normal', 'Earth')
     deck = [card] * 5
-    deck2 = [card] * 5
+    deck2 = [card2] * 5
     p1 = Player('p1', deck, 8000)
     p2 = Player('p2', deck2, 8000)
 
@@ -19,9 +21,16 @@ class Game():
     def test(self):
         self.p1.deck.draw(2)
         self.p2.deck.draw(5)
-        summon('normal', self.p2.hand.cards[0], 0, self.p2, self.field)
-        summon('set', self.p1.hand.cards[0], 0, self.p1, self.field)
+        summon('set', self.p2.hand.cards[0], 0, self.p2, self.field)
+        summon('normal', self.p1.hand.cards[0], 0, self.p1, self.field)
+        print('\n')
         print(self.field)
+        print('\n')
+        self.declareAttack(
+            self.field.p1MonsterZone[0], self.field.p2MonsterZone[0])
+        print(self.field)
+        print(f'Player 1 LP: {self.p1.lp}')
+        print(f'Player 2 LP: {self.p2.lp}')
 
     def startGame(self):
         self.p1.deck.shuffle()
@@ -112,3 +121,61 @@ class Game():
             zone = int(input('Invalid zone, please choose a zone: '))
 
         return zone
+
+    def declareAttack(self, monster, target):
+        self.damageStep(monster, target)
+
+    def damageStep(self, monster, target):
+        # Start of Damage Step
+
+        # Before damage calculation
+        if(not target.faceUp):
+            target.faceUp = True
+
+        # Perform damage calculation
+        self.performDamageCalculation(monster, target)
+
+        # After damage calculation
+
+        # End of Damage Step
+        if(target.position == 'attack'):
+            if(monster.attack > target.attack):
+                destroy(target, self.field)
+            elif(monster.attack < target.attack):
+                destroy(monster, self.field)
+            elif(monster.attack == target.attack):
+                destroy(monster, self.field)
+                destroy(target, self.field)
+        elif(target.position == 'defense'):
+            if(monster.attack > target.defense):
+                destroy(target, self.field)
+            elif(monster.attack < target.defense):
+                pass
+            elif(monster.attack == target.defense):
+                pass
+
+    def performDamageCalculation(self, monster, target):
+        if(target.position == 'attack'):
+            if(monster.attack > target.attack):
+                self.inflictDamage(target.currentOwner,
+                                   monster.attack - target.attack)
+            elif(monster.attack < target.attack):
+                self.inflictDamage(monster.currentOwner,
+                                   target.attack - monster.attack)
+        elif(target.position == 'defense'):
+            if(monster.attack < target.defense):
+                self.inflictDamage(monster.currentOwner,
+                                   target.defense - monster.attack)
+
+    def inflictDamage(self, player, damageAmount):
+        player.lp -= damageAmount
+        self.checkWin()
+
+    def checkWin(self):
+        if(self.p1.lp > 0 and self.p2.lp > 0):
+            return
+
+        if(self.p1.lp <= 0):
+            print('Player 2 Wins!')
+        elif(self.p2.lp <= 0):
+            print('Player 1 Wins!')
