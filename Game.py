@@ -6,23 +6,27 @@ from Mechanics import destroy
 
 
 class Game():
-    field = Field()
     card = Monster('Gem-Knight Garnet', 1900, 0,
                    4, 'Pyro/Normal', 'Earth')
     card2 = Monster('Test', 2000, 1900, 4, 'Pyro/Normal', 'Earth')
+    card3 = Monster('High Level Monster', 3000, 2500, 7, 'Normal', 'Light')
     deck = [card] * 5
+    deck.append(card3)
     deck2 = [card2] * 5
     p1 = Player('p1', deck, 8000)
     p2 = Player('p2', deck2, 8000)
+    field = Field(p1, p2)
 
     def __init__(self):
         pass
 
     def test(self):
-        self.p1.deck.draw(2)
+        self.p1.deck.shuffle()
+        self.p1.deck.draw(4)
         self.p2.deck.draw(5)
-        summon('set', self.p2.hand.cards[0], 0, self.p2, self.field)
-        summon('normal', self.p1.hand.cards[0], 0, self.p1, self.field)
+        self.turn(self.p1)
+        summon('set', self.p2.hand.cards[0], self.p2, self.field)
+        summon('normal', self.p1.hand.cards[0], self.p1, self.field)
         print('\n')
         print(self.field)
         print('\n')
@@ -95,9 +99,12 @@ class Game():
         self.chooseOption(card, card.options[val], player)
 
     def chooseOption(self, card, option, player):
-        if option == 'Normal Summon':
-            zone = self.chooseZone('monster', player)
-            summon('normal', card, zone, player, self.field)
+        if (option == 'Normal Summon'):
+            summon('normal', card, player, self.field)
+        elif (option == 'Set'):
+            pass
+        elif (option == 'Tribute Summon'):
+            summon('tribute', card, player, self.field)
 
     def chooseZone(self, zoneType, player):
         availableZones = []

@@ -11,4 +11,7 @@ class Monster(Card):
         self.level = level
         self.monsterType = monsterType
         self.attribute = attribute
-        self.options = ['Normal Summon', 'Set']
+        if(self.level <= 4):
+            self.options = ['Normal Summon', 'Set']
+        else:
+            self.options = ['Tribute Summon', 'Set']
