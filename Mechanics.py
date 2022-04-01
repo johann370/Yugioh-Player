@@ -1,17 +1,18 @@
-def destroy(card, field):
-    if(card.currentOwner.name == 'p1'):
-        field.p1MonsterZone.remove(card)
-    elif(card.currentOwner.name == 'p2'):
-        field.p2MonsterZone.remove(card)
-
+def destroy(card):
+    card.currentOwner.monsterZone.remove(card)
     card.owner.graveyard.add(card)
 
 
-def tribute(cards, field):
+def tribute(cards):
     for card in cards:
-        if(card.currentOwner.name == 'p1'):
-            field.p1MonsterZone.remove(card)
-        elif(card.currentOwner.name == 'p2'):
-            field.p2MonsterZone.remove(card)
-
+        card.currentOwner.monsterZone.remove(card)
         card.owner.graveyard.add(card)
+
+
+def draw(player, numOfCards):
+    player.deck.draw(numOfCards)
+
+
+def setCard(card, zone):
+    card.faceUp = False
+    card.currentOwner.STZone[zone] = card
