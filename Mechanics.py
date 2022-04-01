@@ -16,3 +16,4 @@ def draw(player, numOfCards):
 def setCard(card, zone):
     card.faceUp = False
     card.currentOwner.STZone[zone] = card
+    card.options = ['Activate']
