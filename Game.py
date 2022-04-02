@@ -16,6 +16,7 @@ class Game():
     p1 = Player('p1', deck, 8000)
     p2 = Player('p2', deck2, 8000)
     field = Field(p1, p2)
+    turn = 1
 
     def __init__(self):
         pass

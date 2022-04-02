@@ -11,6 +11,8 @@ class Monster(Card):
         self.level = level
         self.monsterType = monsterType
         self.attribute = attribute
+        self.lastTurnPositionChanged = None
+        self.turnSummoned = None
         if(self.level <= 4):
             self.options = ['Normal Summon', 'Set']
         else:

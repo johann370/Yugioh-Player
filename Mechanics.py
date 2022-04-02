@@ -17,3 +17,13 @@ def setCard(card, zone):
     card.faceUp = False
     card.currentOwner.STZone[zone] = card
     card.options = ['Activate']
+
+
+def changeBattlePosition(monster, game):
+    if(monster.lastTurnPositionChanged == game.turn or monster.turnSummoned == game.turn):
+        return
+
+    if(monster.position == 'attack'):
+        monster.position = 'defense'
+    elif(monster.position == 'defense'):
+        monster.position = 'attack'
