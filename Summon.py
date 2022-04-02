@@ -1,15 +1,17 @@
 from Mechanics import tribute
 
 
-def summon(summonType, monster, player, field):
+def summon(summonType, monster, game):
     if(summonType == 'normal'):
-        normalSummon(monster, player, field)
+        normalSummon(monster)
     elif(summonType == 'set'):
-        set(monster, player, field)
+        set(monster)
     elif(summonType == 'flip'):
         flipSummon(monster)
     elif(summonType == 'tribute'):
-        tributeSummon(monster, player, field)
+        tributeSummon(monster)
+
+    monster.turnSummoned = game.turn
 
 
 def chooseZone(player):
@@ -29,32 +31,22 @@ def chooseZone(player):
     return zone
 
 
-def normalSummon(monster, player, field):
-    zone = chooseZone(player)
-    if(player.name == 'p1'):
-        player.hand.cards.remove(monster)
-        monster.position = 'attack'
-        monster.faceUp = True
-        field.p1MonsterZone[zone] = monster
-    else:
-        player.hand.cards.remove(monster)
-        monster.position = 'attack'
-        monster.faceUp = True
-        field.p2MonsterZone[zone] = monster
 
 
-def set(monster, player, field):
-    zone = chooseZone(player)
-    if(player.name == 'p1'):
-        player.hand.cards.remove(monster)
-        monster.position = 'defense'
-        monster.faceUp = False
-        field.p1MonsterZone[zone] = monster
-    else:
-        player.hand.cards.remove(monster)
-        monster.position = 'defense'
-        monster.faceUp = False
-        field.p2MonsterZone[zone] = monster
+def normalSummon(monster):
+    zone = chooseZone(monster.currentOwner)
+    monster.currentOwner.hand.cards.remove(monster)
+    monster.position = 'attack'
+    monster.faceUp = True
+    monster.currentOwner.monsterZone[zone] = monster
+
+
+def set(monster):
+    zone = chooseZone(monster.currentOwner)
+    monster.currentOwner.hand.cards.remove(monster)
+    monster.position = 'defense'
+    monster.faceUp = False
+    monster.currentOwner.monsterZone[zone] = monster
 
 
 def flipSummon(monster):
@@ -62,7 +54,8 @@ def flipSummon(monster):
     monster.faceUp = True
 
 
-def tributeSummon(monster, player, field):
+def tributeSummon(monster):
+    player = monster.currentOwner
     numOfTributes = 1
     if(monster.level >= 7):
         numOfTributes = 2
@@ -87,7 +80,7 @@ def tributeSummon(monster, player, field):
         monsterTribute = player.monsterZone[zoneOfTribute]
         monstersToTribute.append(monsterTribute)
 
-    tribute(monstersToTribute, field)
+    tribute(monstersToTribute)
 
     position = int(input('Choose battle position: \n1. Attack \n2. Defense\n'))
     while(position is not 1 and position is not 2):
@@ -95,6 +88,6 @@ def tributeSummon(monster, player, field):
             input('Choose battle position: \n1. Attack \n2. Defense\n'))
 
     if(position == 1):
-        normalSummon(monster, player, field)
+        normalSummon(monster)
     elif(position == 2):
-        set(monster, player, field)
+        set(monster)
