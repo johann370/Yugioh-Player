@@ -17,6 +17,8 @@ class Game():
     p2 = Player('p2', deck2, 8000)
     field = Field(p1, p2)
     turn = 1
+    effects = []
+    turnPlayer = p1
 
     def __init__(self):
         pass
@@ -90,7 +92,7 @@ class Game():
             val = int(input('Choose a card: '))
 
     def endPhase(self, player):
-        pass
+        self.checkEffects('end of turn')
 
     def chooseCard(self, card, player):
         print('Options: ')
@@ -187,3 +189,12 @@ class Game():
             print('Player 2 Wins!')
         elif(self.p2.lp <= 0):
             print('Player 1 Wins!')
+
+    def checkEffects(self, check):
+        if (not self.effects):
+            return
+
+        for effect in self.effects:
+            if(effect['check'] == check):
+                effect['end effect'](effect, self)
+                self.effects.remove(effect)
