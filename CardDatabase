@@ -1,0 +1,27 @@
+from Monster import Monster
+from Trap import Trap
+from Spell import Spell
+
+
+def getCard(cardName):
+    database = {
+        'Summoned Skull': summonedSkull,
+        'La Jinn the Mystical Genie of the Lamp': laJinn,
+        'Neo the Magic Swordsman': neoMagicSwordsman
+    }
+
+    card = database[cardName]
+
+    return card()
+
+
+def summonedSkull():
+    return Monster(name='Summoned Skull', attack=2500, defense=1200, level=6, monsterType=['Fiend', 'Normal'], attribute='Dark', effect=None)
+
+
+def laJinn():
+    return Monster(name='La Jinn the Mystical Genie of the Lamp', attack=1800, defense=1000, level=4, monsterType=['Fiend', 'Normal'], attribute='Dark', effect=None)
+
+
+def neoMagicSwordsman():
+    return Monster(name='Neo the Magic Swordsman', attack=1700, defense=1000, level=4, monsterType=['Spellcaster', 'Normal'], attribute='Light', effect=None)

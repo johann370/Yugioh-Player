@@ -3,7 +3,7 @@ from Summon import summon
 
 
 class Monster(Card):
-    def __init__(self, name, attack, defense, level, monsterType, attribute):
+    def __init__(self, name, attack, defense, level, monsterType, attribute, effect):
         super().__init__(name, "monster")
         self.originalAttack = attack
         self.attack = attack
@@ -16,6 +16,7 @@ class Monster(Card):
         self.lastTurnPositionChanged = None
         self.turnSummoned = None
         self.canDeclareAttack = True
+        self.effect = effect
         if(self.level <= 4):
             self.options = ['Normal Summon', 'Set']
         else:
