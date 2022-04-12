@@ -19,6 +19,7 @@ class Game():
     turn = 1
     effects = []
     turnPlayer = p1
+    otherPlayer = p2
 
     def __init__(self):
         pass
@@ -101,13 +102,20 @@ class Game():
         val = int(input('Choose an option: '))
         self.chooseOption(card, card.options[val], player)
 
-    def chooseOption(self, card, option, player):
+    def chooseOption(self, card, option):
         if (option == 'Normal Summon'):
-            summon('normal', card, player, self.field)
+            summon('normal', card, self)
+            self.checkFaceDowns(
+                self.otherPlayer, 'When Opponent Normal Summons')
         elif (option == 'Set'):
-            pass
+            summon('set', card, self)
         elif (option == 'Tribute Summon'):
-            summon('tribute', card, player, self.field)
+            summon('tribute', card, self)
+            self.checkFaceDowns(
+                self.otherPlayer, 'When Opponent Normal Summons')
+        elif (option == 'Flip Summon'):
+            summon('flip', card, self)
+            self.checkFaceDowns(self.otherPlayer, 'When Opponent Flip Summon')
 
     def chooseZone(self, zoneType, player):
         availableZones = []
@@ -198,3 +206,12 @@ class Game():
             if(effect['check'] == check):
                 effect['end effect'](effect, self)
                 self.effects.remove(effect)
+
+    def checkFaceDowns(player, trigger):
+        cardsToPick = []
+        for card in player.STZone:
+            if(card.effect.trigger == trigger):
+                cardsToPick.append(card)
+
+    def prompt(player, cards):
+        pass

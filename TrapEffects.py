@@ -55,3 +55,16 @@ def reinforcements(game, card):
 
 def reinforcementsEndEffect(effectInfo, game):
     effectInfo['target'].attack -= 500
+
+
+def trapHoleCondition(opponent, monster):
+    if(all(card is None for card in opponent.monsterZone)):
+        return False
+
+    if (monster.attack < 1000):
+        return False
+
+
+def trapHole(game, monster):
+    # Mechanics.target(monster)
+    Mechanics.destroy(monster)

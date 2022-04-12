@@ -31,8 +31,6 @@ def chooseZone(player):
     return zone
 
 
-
-
 def normalSummon(monster):
     zone = chooseZone(monster.currentOwner)
     monster.currentOwner.hand.cards.remove(monster)
