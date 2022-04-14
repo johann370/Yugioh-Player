@@ -15,3 +15,4 @@ class Player:
         self.monsterZone = [None] * 5
         self.STZone = [None] * 5
         self.fieldSpell = None
+        self.effects = []

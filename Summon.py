@@ -10,6 +10,8 @@ def summon(summonType, monster, game):
         flipSummon(monster)
     elif(summonType == 'tribute'):
         tributeSummon(monster)
+    elif(summonType == 'special'):
+        specialSummon(monster)
 
     monster.turnSummoned = game.turn
 
@@ -89,3 +91,20 @@ def tributeSummon(monster):
         normalSummon(monster)
     elif(position == 2):
         set(monster)
+
+
+def specialSummon(monster):
+    zone = chooseZone(monster.currentOwner)
+    position = int(input('Choose battle position: \n1. Attack \n2. Defense\n'))
+    while(position is not 1 and position is not 2):
+        position = int(
+            input('Choose battle position: \n1. Attack \n2. Defense\n'))
+
+    if(position == 1):
+        monster.position = 'attack'
+    elif(position == 2):
+        monster.position = 'defense'
+
+    monster.faceUp = True
+    monster.location.cards.remove(monster)
+    monster.currentOwner.monsterZone[zone] = monster

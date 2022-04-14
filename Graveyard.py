@@ -1,6 +1,6 @@
 class Graveyard:
     def __init__(self):
-        self.graveyard = []
+        self.cards = []
 
     def add(self, card):
-        self.graveyard.append(card)
+        self.cards.append(card)

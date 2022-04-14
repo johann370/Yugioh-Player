@@ -6,6 +6,7 @@ class Card:
         self.owner = None
         self.currentOwner = None
         self.options = []
+        self.location = None
 
     def setOwner(self, owner):
         self.owner = owner

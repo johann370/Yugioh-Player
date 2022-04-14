@@ -7,6 +7,7 @@ class Deck:
         self.player = player
         for card in cards:
             card.setOwner(player)
+            card.setLocation(self)
 
     def shuffle(self):
         random.shuffle(self.cards)

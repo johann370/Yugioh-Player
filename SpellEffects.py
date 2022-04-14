@@ -1,4 +1,5 @@
 import Mechanics
+import Summon
 
 
 def potOfGreed(player):
@@ -94,3 +95,106 @@ def swordsOfRevealingLightEndEffect(effectInfo):
     for monster in effectInfo['affectedMonsters']:
         monster.canDeclareAttack = True
     Mechanics.destroy(effectInfo['card'])
+
+
+def monsterRebornCondition(game):
+    if(not game.p1.graveyard.cards and not game.p2.graveyard.cards):
+        return False
+
+    monstersInGrave = False
+
+    for card in game.p1.graveyard.cards:
+        if card.cardType == 'Monster':
+            monstersInGrave = True
+
+    for card in game.p2.graveyard.cards:
+        if card.cardType == 'Monster':
+            monstersInGrave = True
+
+    return monstersInGrave
+
+
+def monsterReborn(game, card):
+    availableTargets = []
+
+    for card in game.p1.graveyard:
+        if card.cardType == 'Monster':
+            availableTargets.append(card)
+
+    for card in game.p2.graveyard:
+        if card.cardType == 'Monster':
+            availableTargets.append(card)
+
+    monster = Mechanics.chooseCard(availableTargets)
+    # target(monster)
+
+    monster.currentOwner = card.currentOwner
+    Summon.summon('special', monster, game)
+
+
+def deSpellCondition(game):
+    if(all(card is None for card in game.field.p1MonsterZone) and all(card is None for card in game.field.p2MonsterZone)):
+        return False
+
+
+def deSpell(game):
+    availableTargets = []
+
+    for card in game.p1.STZone:
+        if(card.faceUp and card.cardType == 'spell'):
+            availableTargets.append(card)
+        elif(not card.faceUp):
+            availableTargets.append(card)
+
+    target = Mechanics.chooseCard(availableTargets)
+    # target(target)
+
+    if(not target.faceUp):
+        Mechanics.reveal(target)
+
+    if(target.cardType == 'spell'):
+        Mechanics.destroy(target)
+
+
+def changeOfHeartCondition(opponent):
+    if(all(card is None for card in opponent.monsterZone)):
+        return False
+
+
+def changeOfHeart(game, opponent, card):
+    availableTargets = []
+    for monster in opponent.monsterZone:
+        if monster is not None:
+            availableTargets.append(monster)
+
+    target = Mechanics.chooseCard(availableTargets)
+    # target(target)
+
+    zone = Summon.chooseZone(card.currentOwner)
+    card.currentOwner.monsterZone[zone] = target
+    card.location = card.currentOwner.monsterZone
+
+    game.effects.append({
+        'card': card,
+        'check': 'end phase',
+        'turnActivated': game.turn,
+        'end effect': changeOfHeartEndEffect,
+        'target': target,
+        'target player': opponent,
+        'location': card.location,
+        'original location': opponent.monsterZone
+    })
+
+
+def changeOfHeartEndEffect(effectInfo, game):
+    target = effectInfo['target']
+    if(game.turn is not effectInfo['turnActivated']):
+        return
+
+    if(target.location is not effectInfo['location']):
+        return
+
+    zone = Summon.chooseZone(effectInfo['target player'])
+    effectInfo['location'].remove(target)
+    effectInfo['original location'][zone] = target
+    target.location = effectInfo['original location']

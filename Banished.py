@@ -1,3 +1,3 @@
 class Banished:
     def __init__(self):
-        self.banished = []
+        self.cards = []

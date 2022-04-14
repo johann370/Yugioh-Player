@@ -68,3 +68,21 @@ def trapHoleCondition(opponent, monster):
 def trapHole(game, monster):
     # Mechanics.target(monster)
     Mechanics.destroy(monster)
+
+
+def waboku(game, card, player):
+    player.effects.append['No battle damage taken']
+    player.effects.append['Monsters not destroyed by battle']
+
+    game.effects.append({
+        'card': card,
+        'check': 'end of turn',
+        'turnActivated': game.turn,
+        'end effect': wabokuEndEffect,
+        'target': player
+    })
+
+
+def wabokuEndEffect(effectInfo):
+    effectInfo['target'].effects.remove('No battle damage taken')
+    effectInfo['target'].effects.remove('Monsters not destroyed by battle')

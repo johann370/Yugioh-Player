@@ -46,3 +46,19 @@ def activateCard(card, game):
 
 def flip(monster):
     monster.faceUp = True
+
+
+def chooseCard(options):
+    for i in range(len(options)):
+        print(f'{i}. {options[i].cardName}')
+
+    value = input('Choose card')
+
+    while(value < 0 and value > len(options)):
+        value = input('Choose valid card')
+
+    return options[value]
+
+
+def reveal(card):
+    print(card.cardName)
