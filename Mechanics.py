@@ -1,3 +1,10 @@
+from dataclasses import Field, field
+from pickle import TRUE
+
+from Card import Card
+from Monster import Monster
+
+
 def destroy(card):
     if card is None:
         return
