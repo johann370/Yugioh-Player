@@ -20,6 +20,7 @@ class Game():
     effects = []
     turnPlayer = p1
     otherPlayer = p2
+    battle = {'attacker': None, 'defender': None}
 
     def __init__(self):
         pass

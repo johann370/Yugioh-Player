@@ -13,6 +13,8 @@ def raigekiCondition(opponent):
 
 def raigeki(opponent):
     for monster in opponent.monsterZone:
+        if(monster is None):
+            continue
         Mechanics.destroy(monster)
 
 
@@ -23,9 +25,13 @@ def darkHoleCondition(field):
 
 def darkHole(field):
     for monster in field.p1MonsterZone:
+        if(monster is None):
+            continue
         Mechanics.destroy(monster)
 
     for monster in field.p2MonsterZone:
+        if(monster is None):
+            continue
         Mechanics.destroy(monster)
 
 
@@ -37,6 +43,8 @@ def fissureCondition(opponent):
     # check if there are face up monsters
     faceUpMonstersInField = False
     for monster in opponent.monsterZone:
+        if(monster is None):
+            continue
         if(monster.faceUp):
             faceUpMonstersInField = True
 
@@ -46,6 +54,8 @@ def fissureCondition(opponent):
 def fissure(opponent):
     monsterToDestroy = None
     for monster in opponent.monsterZone:
+        if(monster is None):
+            continue
         if(monsterToDestroy is None):
             monsterToDestroy = monster
         elif(monster.attack < monsterToDestroy.attack):
@@ -57,6 +67,8 @@ def fissure(opponent):
 def swordsOfRevealingLight(game, opponent, card):
     affectedMonsters = []
     for monster in opponent.monsterZone:
+        if(monster is None):
+            continue
         if(not monster.faceUp):
             Mechanics.flip(monster)
 
@@ -141,6 +153,16 @@ def deSpell(game):
     availableTargets = []
 
     for card in game.p1.STZone:
+        if(card is None):
+            continue
+        if(card.faceUp and card.cardType == 'spell'):
+            availableTargets.append(card)
+        elif(not card.faceUp):
+            availableTargets.append(card)
+
+    for card in game.p2.STZone:
+        if(card is None):
+            continue
         if(card.faceUp and card.cardType == 'spell'):
             availableTargets.append(card)
         elif(not card.faceUp):

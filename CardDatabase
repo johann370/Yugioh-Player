@@ -4,6 +4,7 @@ from Spell import Spell
 from Effect import Effect
 import SpellEffects
 import TrapEffects
+import MonsterEffects
 
 
 def getCard(cardName):
@@ -52,7 +53,10 @@ def battleOx():
 
 
 def wallOfIllusion():
-    pass
+    effect = Effect(effect=MonsterEffects.wallOfIllusion, cost=None,
+                    condition=None, trigger=['Continuous'])
+
+    return Monster(name='Wall of Illusion', attack=1000, defense=1850, level=4, monsterType=['Fiend', 'Effect'], attribute='Dark', effect=effect)
 
 
 def giantSoldier():
@@ -60,7 +64,10 @@ def giantSoldier():
 
 
 def trapMaster():
-    pass
+    effect = Effect(effect=MonsterEffects.trapMaster, cost=None,
+                    condition=MonsterEffects.trapMasterCondition, trigger=['Flip'])
+
+    return Monster(name='Trap Master', attack=500, defense=1100, level=3, monsterType=['Warrior', 'Flip', 'Effect'], attribute='Earth', effect=effect)
 
 
 def manEaterBug():
