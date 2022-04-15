@@ -62,3 +62,18 @@ def chooseCard(options):
 
 def reveal(card):
     print(card.cardName)
+
+def targetMonster(cards):
+    monsterOnField = []
+    
+    for i in range(len(Field.p1Monster+Field.p2Monster)):
+            monsterOnField.append(i)
+    
+    print(f'monsters on field: {monsterOnField}')
+    target = int(input('Target Monster'))
+
+    while(target not in monsterOnField):  
+         print(f'monsters on field: {monsterOnField}')
+         target = int(input('Target Monster')) 
+
+    return target
