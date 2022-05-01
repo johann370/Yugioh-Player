@@ -83,7 +83,7 @@ def tributeSummon(monster):
     tribute(monstersToTribute)
 
     position = int(input('Choose battle position: \n1. Attack \n2. Defense\n'))
-    while(position is not 1 and position is not 2):
+    while(position != 1 and position != 2):
         position = int(
             input('Choose battle position: \n1. Attack \n2. Defense\n'))
 

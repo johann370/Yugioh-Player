@@ -1,3 +1,13 @@
+from Chain import Chain
+
+
+def destroyByBattle(monster):
+    if('Monsters not destroyed by battle' in monster.currentOwner.effects):
+        return
+
+    destroy(monster)
+
+
 def destroy(card):
     if card is None:
         return
@@ -21,7 +31,6 @@ def draw(player, numOfCards):
 def setCard(card, zone):
     card.faceUp = False
     card.currentOwner.STZone[zone] = card
-    card.options = ['Activate']
 
 
 def changeBattlePosition(monster, game):
@@ -41,7 +50,11 @@ def inflictDamage(player, amount):
 
 
 def activateCard(card, game):
-    card.effect.activate(card, game)
+    card.effect.payCost()
+
+    game.chain.addChainLink(card)
+
+    checkForResponse(game)
 
 
 def flip(monster):
@@ -50,15 +63,65 @@ def flip(monster):
 
 def chooseCard(options):
     for i in range(len(options)):
-        print(f'{i}. {options[i].cardName}')
+        print(f'{i}. {options[i].name}')
 
-    value = input('Choose card')
+    value = int(input('Choose card: '))
 
     while(value < 0 and value > len(options)):
-        value = input('Choose valid card')
+        value = int(input('Choose valid card: '))
 
     return options[value]
 
 
 def reveal(card):
     print(card.cardName)
+
+
+def checkForResponse(game, player, responses):
+    if(all(card is None for card in player.STZone)):
+        return
+
+    availableCards = []
+
+    for card in player.STZone:
+        if card is None:
+            continue
+        if(card.spellSpeed < game.chain.spellSpeed):
+            continue
+        for response in responses:
+            if (response in card.effect.trigger and card not in availableCards):
+                availableCards.append(card)
+
+    if (not availableCards):
+        return
+
+    availableCards.append(None)
+
+    response = chooseCard(availableCards)
+
+    if (response is None):
+        return False
+
+    addToChain(response, game)
+
+    return True
+
+
+def createChain(game, card):
+    if(game.chain):
+        return
+
+    addToChain(card, game)
+    game.chain.resolve()
+
+
+def addToChain(card, game):
+    card.effect.payCost()
+
+    game.chain.addChainLink(card)
+
+    response = checkForResponse(
+        game, card.currentOwner.opponent, card.effect.responses)
+
+    if(not response):
+        checkForResponse(game, card.currenOwner, card.effect.responses)
