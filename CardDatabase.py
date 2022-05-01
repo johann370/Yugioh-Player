@@ -71,8 +71,10 @@ def trapMaster():
 
 
 def manEaterBug():
-    pass
+    effect = Effect(effect=MonsterEffects.manEaterBug, cost=None,
+                     condition=MonsterEffects.manEaterBugCondition, trigger=['Flip'])
 
+    return Monster(name='Man-Eater Bug', attack=450, defense=600, level=2, monsterType=['Insect', 'Flip', 'Effect'], attribute='Earth', effect=effect)
 
 def potOfGreed():
     effect = Effect(effect=SpellEffects.potOfGreed,

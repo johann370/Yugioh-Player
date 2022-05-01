@@ -1,4 +1,7 @@
 from Chain import Chain
+from dataclasses import Field, field
+from Card import Card
+from Monster import Monster
 
 
 def destroyByBattle(monster):
@@ -125,3 +128,19 @@ def addToChain(card, game):
 
     if(not response):
         checkForResponse(game, card.currenOwner, card.effect.responses)
+
+
+def targetMonster(cards):
+    monsterOnField = []
+
+    for i in range(len(Field.p1Monster+Field.p2Monster)):
+        monsterOnField.append(i)
+
+    print(f'monsters on field: {monsterOnField}')
+    target = int(input('Target Monster'))
+
+    while(target not in monsterOnField):
+        print(f'monsters on field: {monsterOnField}')
+        target = int(input('Target Monster'))
+
+    return target

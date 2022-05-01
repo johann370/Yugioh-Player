@@ -54,3 +54,23 @@ def wallOfIllusionContinuous(effectInfo, game):
     attacker.currentOwner.monsterZone.remove(attacker)
     attacker.owner.hand.cards.append(attacker)
     attacker.location = attacker.owner.hand
+
+
+def manEaterBugCondition(game):
+    if(all(card is None for card in game.p1.MonsterZone) and all(card is None for card in game.p2.MonsterZone)):
+        return False
+
+    return True
+
+
+def manEaterBug(game):
+    availableTargets = []
+    emptyZone = []
+
+    for card in game.p2.MonsterZone:
+        if(card is None):
+            continue
+        if(card.faceUp and card.cardType == 'monster'):
+            availableTargets.append(card)
+        elif(not card.faceUp):
+            emptyZone.append(card)
