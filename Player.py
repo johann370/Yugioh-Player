@@ -16,3 +16,4 @@ class Player:
         self.STZone = [None] * 5
         self.fieldSpell = None
         self.effects = []
+        self.opponent = None
