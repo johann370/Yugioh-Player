@@ -17,7 +17,31 @@ class Monster(Card):
         self.turnSummoned = None
         self.canDeclareAttack = True
         self.effect = effect
-        if(self.level <= 4):
-            self.options = ['Normal Summon', 'Set']
-        else:
-            self.options = ['Tribute Summon', 'Set']
+        self.hasAttacked = False
+
+    def getOptions(self, game):
+        availableOptions = []
+
+        if(game.normalSummonUsed):
+            return availableOptions
+
+        zoneFull = True
+        for card in self.currentOwner.monsterZone:
+            if card is None:
+                zoneFull = False
+
+        if (zoneFull and self.level <= 4):
+            return availableOptions
+
+        if(self.level <= 4 and self.turnSummoned is None):
+            availableOptions = ['Normal Summon', 'Set Monster']
+        elif(self.level > 4 and self.turnSummoned is None):
+            availableOptions = ['Tribute Summon', 'Set Monster']
+
+        if(not self.faceUp and self.turnSummoned is not None and game.turn != self.turnSummoned):
+            availableOptions = ['Flip Summon']
+
+        if(self.turnSummoned is not None and game.turn != self.lastTurnPositionChanged and self.faceUp):
+            availableOptions = ['Change Battle Position']
+
+        return availableOptions
