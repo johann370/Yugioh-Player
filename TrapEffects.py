@@ -5,6 +5,8 @@ def justDessertsCondition(opponent):
     if(all(card is None for card in opponent.monsterZone)):
         return False
 
+    return True
+
 
 def justDesserts(opponent):
     damageAmount = 0
@@ -63,6 +65,8 @@ def trapHoleCondition(opponent, monster):
 
     if (monster.attack < 1000):
         return False
+
+    return True
 
 
 def trapHole(game, monster):

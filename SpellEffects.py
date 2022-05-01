@@ -10,6 +10,8 @@ def raigekiCondition(opponent):
     if(all(card is None for card in opponent.monsterZone)):
         return False
 
+    return True
+
 
 def raigeki(opponent):
     for monster in opponent.monsterZone:
@@ -21,6 +23,8 @@ def raigeki(opponent):
 def darkHoleCondition(field):
     if(all(card is None for card in field.p1MonsterZone) and all(card is None for card in field.p2MonsterZone)):
         return False
+
+    return True
 
 
 def darkHole(field):
@@ -148,6 +152,8 @@ def deSpellCondition(game):
     if(all(card is None for card in game.field.p1MonsterZone) and all(card is None for card in game.field.p2MonsterZone)):
         return False
 
+    return True
+
 
 def deSpell(game):
     availableTargets = []
@@ -181,6 +187,8 @@ def deSpell(game):
 def changeOfHeartCondition(opponent):
     if(all(card is None for card in opponent.monsterZone)):
         return False
+
+    return True
 
 
 def changeOfHeart(game, opponent, card):

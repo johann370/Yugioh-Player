@@ -5,6 +5,8 @@ def trapMasterCondition(game):
     if(all(card is None for card in game.p1.STZone) and all(card is None for card in game.p2.STZone)):
         return False
 
+    return True
+
 
 def trapMaster(game):
     availableTargets = []
