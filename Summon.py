@@ -14,6 +14,9 @@ def summon(summonType, monster, game):
         specialSummon(monster)
 
     monster.turnSummoned = game.turn
+    monster.location = monster.currentOwner.monsterZone
+    if(monster.effect is not None and monster.effect.initial is not None):
+        monster.effect.initial(game, monster, None)
 
 
 def chooseZone(player):
@@ -96,7 +99,7 @@ def tributeSummon(monster):
 def specialSummon(monster):
     zone = chooseZone(monster.currentOwner)
     position = int(input('Choose battle position: \n1. Attack \n2. Defense\n'))
-    while(position is not 1 and position is not 2):
+    while(position != 1 and position != 2):
         position = int(
             input('Choose battle position: \n1. Attack \n2. Defense\n'))
 

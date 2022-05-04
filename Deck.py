@@ -16,6 +16,7 @@ class Deck:
         for i in range(numOfCards):
             if(self.cards):
                 card = self.cards.pop(0)
+                card.location = card.currentOwner.hand.cards
                 self.player.hand.cards.append(card)
             else:
                 print('Deck is empty')

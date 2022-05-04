@@ -9,7 +9,7 @@ class Trap(Card):
         self.spellSpeed = spellSpeed
         self.turnSet = None
 
-    def getOptions(self, game):
+    def getOptions(self, game, activatedCard):
         availableOptions = []
 
         zoneFull = True
@@ -20,7 +20,7 @@ class Trap(Card):
         if (zoneFull):
             return availableOptions
 
-        if(self.effect.condition() and self.turnSet != game.turn):
+        if(self.turnSet is not None and self.effect.checkCondition(game, activatedCard, None) and self.turnSet != game.turn):
             availableOptions.append('Activate')
 
         if(self.turnSet is None):

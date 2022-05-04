@@ -1,14 +1,16 @@
 import Mechanics
 
 
-def justDessertsCondition(opponent):
+def justDessertsCondition(game, card, target):
+    opponent = card.currentOwner.opponent
     if(all(card is None for card in opponent.monsterZone)):
         return False
 
     return True
 
 
-def justDesserts(opponent):
+def justDesserts(game, card, target):
+    opponent = card.currentOwner.opponent
     damageAmount = 0
     for monster in opponent.monsterZone:
         if monster is not None:
@@ -17,12 +19,15 @@ def justDesserts(opponent):
     Mechanics.inflictDamage(opponent, damageAmount)
 
 
-def reinforcementsCondition(field):
+def reinforcementsCondition(game, card, target):
+    field = game.field
     if(all(card is None for card in field.p1MonsterZone) and all(card is None for card in field.p2MonsterZone)):
         return False
 
+    return True
 
-def reinforcements(game, card):
+
+def reinforcements(game, card, target):
     field = game.field
     targets = []
     for monster in field.p1MonsterZone:
@@ -37,10 +42,10 @@ def reinforcements(game, card):
     for monster in targets:
         print(f'{i}. {monster.name}')
 
-    value = input('Enter target')
+    value = int(input('Enter target: '))
 
     while(value < 0 or value > targets.length):
-        value = input('Enter target')
+        value = int(input('Enter target: '))
 
     target = targets[value]
 
@@ -50,40 +55,43 @@ def reinforcements(game, card):
         'card': card,
         'check': 'end of turn',
         'turnActivated': game.turn,
-        'end effect': reinforcementsEndEffect,
-        'target': target
+        'end of turn': reinforcementsEndEffect,
+        'target': target,
     })
 
 
 def reinforcementsEndEffect(effectInfo, game):
-    effectInfo['target'].attack -= 500
+    monster = effectInfo['target']
+    if(monster.location == monster.currentOwner.monsterZone or monster.location == monster.originalOwner.monsterZone):
+        monster.attack -= 500
 
 
-def trapHoleCondition(opponent, monster):
+def trapHoleCondition(game, card, target):
+    opponent = card.currentOwner.opponent
     if(all(card is None for card in opponent.monsterZone)):
         return False
 
-    if (monster.attack < 1000):
+    if (target.attack < 1000):
         return False
 
     return True
 
 
-def trapHole(game, monster):
+def trapHole(game, card, target):
     # Mechanics.target(monster)
-    Mechanics.destroy(monster)
+    Mechanics.destroy(game, target)
 
 
-def waboku(game, card, player):
-    player.effects.append['No battle damage taken']
-    player.effects.append['Monsters not destroyed by battle']
+def waboku(game, card, target):
+    card.currentOwner.effects.append['No battle damage taken']
+    card.currentOwner.effects.append['Monsters not destroyed by battle']
 
     game.effects.append({
         'card': card,
         'check': 'end of turn',
         'turnActivated': game.turn,
-        'end effect': wabokuEndEffect,
-        'target': player
+        'end of turn': wabokuEndEffect,
+        'target': card.currentOwner,
     })
 
 

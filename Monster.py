@@ -19,7 +19,7 @@ class Monster(Card):
         self.effect = effect
         self.hasAttacked = False
 
-    def getOptions(self, game):
+    def getOptions(self, game, monster):
         availableOptions = []
 
         if(game.normalSummonUsed):

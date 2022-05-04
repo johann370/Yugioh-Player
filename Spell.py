@@ -9,7 +9,7 @@ class Spell(Card):
         self.spellSpeed = spellSpeed
         self.turnSet = None
 
-    def getOptions(self, game):
+    def getOptions(self, game, activatedCard):
         availableOptions = []
 
         zoneFull = True
@@ -20,7 +20,7 @@ class Spell(Card):
         if (zoneFull):
             return availableOptions
 
-        if(self.effect.condition()):
+        if(self.effect.condition is None or self.effect.checkCondition(game, activatedCard, None)):
             availableOptions.append('Activate')
 
         if(self.turnSet is None):

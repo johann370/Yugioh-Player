@@ -11,6 +11,16 @@ class Field:
     def __str__(self) -> str:
         string = ''
 
+        for card in self.p2STZone:
+            if(card is None):
+                string += ' | None'
+            elif(card.faceUp):
+                string += ' | ' + card.name
+            else:
+                string += ' | Face Down Card'
+
+        string += '\n'
+
         for monster in self.p2MonsterZone:
             if (monster is None):
                 string += ' | None'
@@ -30,5 +40,15 @@ class Field:
             else:
                 string += ' | Face Down Monster' + \
                     ' (' + monster.position + ')'
+
+        string += '\n'
+
+        for card in self.p1STZone:
+            if(card is None):
+                string += ' | None'
+            elif(card.faceUp):
+                string += ' | ' + card.name
+            else:
+                string += ' | Face Down Card'
 
         return string

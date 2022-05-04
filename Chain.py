@@ -1,4 +1,5 @@
 from ChainLink import ChainLink
+import Mechanics
 
 
 class Chain:
@@ -6,11 +7,17 @@ class Chain:
         self.chain = []
         self.spellSpeed = 1
 
-    def resolve(self):
+    def resolve(self, game):
+        cards = []
         while(self.chain):
             chainLink = self.chain.pop()
-            chainLink.card.effect.activate()
+            chainLink.card.effect.activate(
+                game, chainLink.card, chainLink.previousCard)
+            if('Continuous-like' not in chainLink.card.effect.effectType):
+                cards.append(chainLink.card)
 
-    def addChainLink(self, card):
-        chainLink = ChainLink(card)
+        Mechanics.sendToGrave(cards)
+
+    def addChainLink(self, card, previousCard):
+        chainLink = ChainLink(card, previousCard)
         self.chain.append(chainLink)

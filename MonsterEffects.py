@@ -1,14 +1,14 @@
 import Mechanics
 
 
-def trapMasterCondition(game):
+def trapMasterCondition(game, card, target):
     if(all(card is None for card in game.p1.STZone) and all(card is None for card in game.p2.STZone)):
         return False
 
     return True
 
 
-def trapMaster(game):
+def trapMaster(game, card, target):
     availableTargets = []
 
     for card in game.p1.STZone:
@@ -34,36 +34,46 @@ def trapMaster(game):
         Mechanics.reveal(target)
 
     if(target.cardType == 'trap'):
-        Mechanics.destroy(target)
+        Mechanics.destroy(game, target)
 
 
-def wallOfIllusion(game, card, opponent):
+def wallOfIllusion(game, card, target):
+    opponent = card.currentOwner.opponent
     game.effects.append({
         'card': card,
         'check': 'after damage calculation',
-        'continuousEffect': wallOfIllusionContinuous,
-        'opponent': opponent
+        'after damage calculation': wallOfIllusionBattle,
+        'opponent': opponent,
+        'end effect': wallOfIllusionEndEffect
     })
 
 
-def wallOfIllusionContinuous(effectInfo, game):
+def wallOfIllusionBattle(effectInfo, game):
+    if(effectInfo['card'] != game.battle['defender']):
+        return
+
     attacker = game.battle['attacker']
     if(attacker.location is not effectInfo['opponent'].monsterZone):
         return
 
-    attacker.currentOwner.monsterZone.remove(attacker)
+    idx = attacker.location.index(attacker)
+    attacker.location[idx] = None
     attacker.owner.hand.cards.append(attacker)
     attacker.location = attacker.owner.hand
 
 
-def manEaterBugCondition(game):
+def wallOfIllusionEndEffect(effectInfo, game):
+    game.effects.remove(effectInfo)
+
+
+def manEaterBugCondition(game, card, target):
     if(all(card is None for card in game.p1.MonsterZone) and all(card is None for card in game.p2.MonsterZone)):
         return False
 
     return True
 
 
-def manEaterBug(game):
+def manEaterBug(game, card, target):
     availableTargets = []
     emptyZone = []
 

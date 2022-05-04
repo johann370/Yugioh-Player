@@ -2,18 +2,18 @@ from Field import Field
 from Monster import Monster
 from Player import Player
 from Summon import summon
+from CreateDeck import createDeck
 import Mechanics
 
 
 class Game():
-    card = Monster('Gem-Knight Garnet', 1900, 0,
-                   4, 'Pyro/Normal', 'Earth', effect=None)
-    card2 = Monster('Test', 2000, 1900, 4, 'Pyro/Normal', 'Earth', effect=None)
-    card3 = Monster('High Level Monster', 3000, 2500,
-                    7, 'Normal', 'Light', effect=None)
-    deck = [card] * 5
-    deck.append(card3)
-    deck2 = [card2] * 5
+    # card = Monster('Gem-Knight Garnet', 1900, 0,
+    #                4, 'Pyro/Normal', 'Earth', effect=None)
+    # card2 = Monster('Test', 2000, 1900, 4, 'Pyro/Normal', 'Earth', effect=None)
+    # card3 = Monster('High Level Monster', 3000, 2500,
+    #                 7, 'Normal', 'Light', effect=None)
+    deck = createDeck('Deck Lists\deck1.txt')
+    deck2 = createDeck('Deck Lists\deck1.txt')
     p1 = Player('p1', deck, 8000)
     p2 = Player('p2', deck2, 8000)
     p1.opponent = p2
@@ -26,6 +26,7 @@ class Game():
     battle = {'attacker': None, 'defender': None}
     normalSummonUsed = False
     chain = None
+    monstersAttacked = []
 
     def __init__(self):
         pass
@@ -33,6 +34,7 @@ class Game():
     def test(self):
         self.p1.deck.shuffle()
         self.p1.deck.draw(4)
+        self.p2.deck.shuffle()
         self.p2.deck.draw(5)
 
         while(True):
@@ -44,38 +46,61 @@ class Game():
         self.p2.deck.shuffle()
         self.p2.deck.draw(5)
 
+        while(True):
+            self.turn()
+
     def turn(self):
         self.drawPhase()
         self.standbyPhase()
-        self.mainPhase1()
+        self.mainPhase(1)
         self.battlePhase()
-        self.mainPhase2()
+        self.mainPhase(2)
         self.endPhase()
 
     def drawPhase(self):
         print(f'{self.turnPlayer.name} turn (Turn {self.turnCounter})\n')
         print('Draw Phase\n')
-        self.turnPlayer.deck.draw(1)
+        Mechanics.draw(self.turnPlayer, 1)
 
     def standbyPhase(self):
         print('Standby Phase\n')
         pass
 
-    def mainPhase1(self):
-        print('Main Phase 1\n')
+    def mainPhase(self, num):
+        print(f'Main Phase {num}')
 
         while(True):
-            print('1. Next phase \n2. Select Card\n3. Print Hand\n4. Print Field')
+            print(
+                '\n1. Next phase \n2. Select Card\n3. Activate Set Card\n4. Print Hand\n5. Print Field\n6. Print Life Points')
             val = int(input('Choose Option: '))
+            print('\n')
             if(val == 1):
-                return
+                response = Mechanics.checkForResponse(
+                    self, self.otherPlayer, ['Any'], None)
+
+                if(not response):
+                    return
             elif(val == 2):
                 card = Mechanics.chooseCard(self.turnPlayer.hand.cards)
                 self.selectCard(card)
             elif(val == 3):
-                self.turnPlayer.hand.printHand()
+                availableCards = []
+                for card in self.turnPlayer.STZone:
+                    if(card is None):
+                        continue
+                    if(card.effect.condition(self, card, None)):
+                        availableCards.append(card)
+
+                cardToActivate = Mechanics.chooseCard(availableCards)
+                Mechanics.createChain(self, cardToActivate, None)
             elif(val == 4):
-                print(self.field)
+                self.turnPlayer.hand.printHand()
+            elif(val == 5):
+                print(f'\n{self.field}')
+            elif(val == 6):
+                print(f'P1: {self.p1.lp}\nP2: {self.p2.lp}')
+
+            self.checkEffects('continuousEffect')
 
     def battlePhase(self):
         if(self.turnCounter == 1):
@@ -83,53 +108,76 @@ class Game():
 
         print('Battle Phase\n')
 
-        availableAttackers = []
-        for monster in self.turnPlayer.monsterZone:
-            if (monster is not None and not monster.hasAttacked):
-                availableAttackers.append(monster)
-
-        attacker = Mechanics.chooseCard(availableAttackers)
-
-        availableTargets = []
-        for monster in self.otherPlayer.monsterZone:
-            if (monster is not None):
-                availableTargets.append(monster)
-
-        if(not availableTargets):
-            availableTargets.append(self.otherPlayer)
-
-        target = Mechanics.chooseCard(availableTargets)
-
-        self.declareAttack(attacker, target)
-
-    def mainPhase2(self):
-        print('Main Phase 2\n')
-
         while(True):
-            print('1. Next phase \n2. Select Card\n3. Print Hand\n4. Print Field')
+            print('\n1. Declare Attack \n2. Activate Card\n3. End Battle Phase')
             val = int(input('Choose Option: '))
+            print('\n')
             if(val == 1):
-                return
+                availableAttackers = []
+                for monster in self.turnPlayer.monsterZone:
+                    if (monster is not None and not monster.hasAttacked and monster.position == 'attack' and monster.canDeclareAttack):
+                        availableAttackers.append(monster)
+
+                if (not availableAttackers):
+                    return
+
+                availableAttackers.append(None)
+
+                attacker = Mechanics.chooseCard(availableAttackers)
+
+                if(attacker is None):
+                    return
+
+                availableTargets = []
+                for monster in self.otherPlayer.monsterZone:
+                    if (monster is not None):
+                        availableTargets.append(monster)
+
+                if(not availableTargets):
+                    availableTargets.append(self.otherPlayer)
+
+                target = Mechanics.chooseCard(availableTargets)
+
+                if(target == self.p1 or target == self.p2):
+                    self.declareAttack(attacker, target, True)
+                else:
+                    self.declareAttack(attacker, target, False)
             elif(val == 2):
-                card = Mechanics.chooseCard(self.turnPlayer.hand.cards)
-                self.selectCard(card)
+                availableCards = []
+                for card in self.turnPlayer.STZone:
+                    if(card is None):
+                        continue
+                    if(card.effect.condition(self, card, None)):
+                        availableCards.append(card)
+
+                cardToActivate = Mechanics.chooseCard(availableCards)
+                Mechanics.createChain(self, cardToActivate, None)
             elif(val == 3):
-                self.turnPlayer.hand.printHand()
-            elif(val == 4):
-                print(self.field)
+                response = Mechanics.checkForResponse(
+                    self, self.otherPlayer, ['Any'], None)
+
+                if(not response):
+                    return
 
     def endPhase(self):
         print('End Phase\n')
 
+        self.checkEffects('end phase')
         self.checkEffects('end of turn')
 
         temp = self.turnPlayer
         self.turnPlayer = self.otherPlayer
         self.otherPlayer = temp
         self.turnCounter += 1
+        self.normalSummonUsed = False
+
+        for monster in self.monstersAttacked:
+            monster.hasAttacked = False
+        self.monstersAttacked = []
 
     def selectCard(self, card):
-        options = card.getOptions(self)
+        options = card.getOptions(self, card)
+        options.append('Cancel')
         print('Options: ')
         for i in range(len(options)):
             print(f'{i}. {options[i]}')
@@ -139,84 +187,99 @@ class Game():
     def chooseOption(self, card, option):
         if (option == 'Normal Summon'):
             summon('normal', card, self)
-            self.checkFaceDowns(
-                self.otherPlayer, 'When Opponent Normal Summons')
+            self.normalSummonUsed = True
+            Mechanics.checkForResponse(self, self.otherPlayer, [
+                                       'When Opponent Normal Summons'], card)
         elif (option == 'Set Monster'):
             summon('set', card, self)
+            self.normalSummonUsed = True
         elif (option == 'Tribute Summon'):
             summon('tribute', card, self)
-            self.checkFaceDowns(
-                self.otherPlayer, 'When Opponent Normal Summons')
+            self.normalSummonUsed = True
+            Mechanics.checkForResponse(self, self.otherPlayer, [
+                                       'When Opponent Normal Summons'], card)
         elif (option == 'Flip Summon'):
             summon('flip', card, self)
-            self.checkFaceDowns(self.otherPlayer, 'When Opponent Flip Summons')
+            Mechanics.checkForResponse(self, self.otherPlayer, [
+                                       'When Opponent Flip Summons'], card)
         elif (option == 'Change Battle Position'):
             Mechanics.changeBattlePosition(card, self)
         elif (option == 'Activate'):
-            Mechanics.createChain(self, card)
+            zone = Mechanics.chooseZone(card.currentOwner.STZone)
+            card.location.remove(card)
+            card.currentOwner.STZone[zone] = card
+            card.location = card.currentOwner.STZone
+            card.faceUp = True
+            Mechanics.createChain(self, card, None)
         elif (option == 'Set'):
-            pass
+            Mechanics.setCard(card)
+        elif (option == 'Cancel'):
+            return
 
-    def declareAttack(self, monster, target):
+    def declareAttack(self, monster, target, directAttack):
+        monster.hasAttacked = True
+        self.monstersAttacked.append(monster)
         self.battle['attacker'] = monster
         self.battle['defender'] = target
-        self.damageStep(monster, target)
+        self.damageStep(monster, target, directAttack)
 
-    def damageStep(self, monster, target):
+    def damageStep(self, monster, target, directAttack):
         # Start of Damage Step
-        self.checkFaceDowns(self.turnPlayer, 'modify atk/def')
-        self.checkFaceDowns(self.otherPlayer, 'modify atk/def')
+        Mechanics.checkForResponse(self, self.turnPlayer, [
+            'modify atk/def'], None)
+        Mechanics.checkForResponse(self, self.otherPlayer, [
+            'modify atk/def'], None)
 
         # Before damage calculation
-        if(not target.faceUp):
+        if(not directAttack and not target.faceUp):
             target.faceUp = True
 
-        self.checkFaceDowns(self.turnPlayer, 'modify atk/def')
-        self.checkFaceDowns(self.otherPlayer, 'modify atk/def')
+        Mechanics.checkForResponse(self, self.turnPlayer, [
+            'modify atk/def'], None)
+        Mechanics.checkForResponse(self, self.otherPlayer, [
+            'modify atk/def'], None)
 
         # Perform damage calculation
-        self.performDamageCalculation(monster, target)
+        self.performDamageCalculation(monster, target, directAttack)
 
         # After damage calculation
         self.checkEffects('after damage calculation')
-        if('Flip' in target.monsterType):
-            Mechanics.activateCard(target, self)
+        if(not directAttack and 'Flip' in target.monsterType):
+            Mechanics.createChain(self, target)
 
         # End of Damage Step
-        if(target.position == 'attack'):
+        if(not directAttack and target.position == 'attack'):
             if(monster.attack > target.attack):
-                Mechanics.destroyByBattle(target)
+                Mechanics.destroyByBattle(self, target)
             elif(monster.attack < target.attack):
-                Mechanics.destroyByBattle(monster)
+                Mechanics.destroyByBattle(self, monster)
             elif(monster.attack == target.attack):
-                Mechanics.destroyByBattle(monster)
-                Mechanics.destroyByBattle(target)
-        elif(target.position == 'defense'):
+                Mechanics.destroyByBattle(self, monster)
+                Mechanics.destroyByBattle(self, target)
+        elif(not directAttack and target.position == 'defense'):
             if(monster.attack > target.defense):
-                Mechanics.destroyByBattle(target)
+                Mechanics.destroyByBattle(self, target)
             elif(monster.attack < target.defense):
                 pass
             elif(monster.attack == target.defense):
                 pass
 
-    def performDamageCalculation(self, monster, target):
+    def performDamageCalculation(self, monster, target, directAttack):
+        if(directAttack):
+            return Mechanics.inflictBattleDamage(target, monster.attack)
+
         if(target.position == 'attack'):
             if(monster.attack > target.attack):
-                self.inflictBattleDamage(target.currentOwner,
-                                         monster.attack - target.attack)
+                Mechanics.inflictBattleDamage(target.currentOwner,
+                                              monster.attack - target.attack)
             elif(monster.attack < target.attack):
-                self.inflictBattleDamage(monster.currentOwner,
-                                         target.attack - monster.attack)
+                Mechanics.inflictBattleDamage(monster.currentOwner,
+                                              target.attack - monster.attack)
         elif(target.position == 'defense'):
             if(monster.attack < target.defense):
-                self.inflictBattleDamage(monster.currentOwner,
-                                         target.defense - monster.attack)
+                Mechanics.inflictBattleDamage(monster.currentOwner,
+                                              target.defense - monster.attack)
 
-    def inflictBattleDamage(self, player, damageAmount):
-        if('No battle damage taken' in player.effects):
-            return
-
-        player.lp -= damageAmount
         self.checkWin()
 
     def checkWin(self):
@@ -233,15 +296,7 @@ class Game():
             return
 
         for effect in self.effects:
-            if(effect['check'] == check):
-                effect['end effect'](effect, self)
-                self.effects.remove(effect)
-
-    def checkFaceDowns(self, player, trigger):
-        cardsToPick = []
-        for card in player.STZone:
-            if(card is not None and trigger in card.effect.trigger):
-                cardsToPick.append(card)
-
-    def prompt(self, player, cards):
-        pass
+            if(check == effect['check']):
+                effect[check](effect, self)
+            elif(check in effect):
+                effect[check](effect, self)
