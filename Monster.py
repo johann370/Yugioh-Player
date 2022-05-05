@@ -26,22 +26,27 @@ class Monster(Card):
             return availableOptions
 
         zoneFull = True
+        numOfMonsters = 0
         for card in self.currentOwner.monsterZone:
             if card is None:
                 zoneFull = False
+            else:
+                numOfMonsters += 1
 
         if (zoneFull and self.level <= 4):
             return availableOptions
 
         if(self.level <= 4 and self.turnSummoned is None):
             availableOptions = ['Normal Summon', 'Set Monster']
-        elif(self.level > 4 and self.turnSummoned is None):
+        elif(self.level > 4 and self.level < 7 and self.turnSummoned is None and numOfMonsters >= 1):
+            availableOptions = ['Tribute Summon', 'Set Monster']
+        elif(self.level >= 7 and self.turnSummoned is None and numOfMonsters >= 2):
             availableOptions = ['Tribute Summon', 'Set Monster']
 
-        if(not self.faceUp and self.turnSummoned is not None and game.turn != self.turnSummoned):
+        if(not self.faceUp and self.turnSummoned is not None and game.turnCounter != self.turnSummoned):
             availableOptions = ['Flip Summon']
 
-        if(self.turnSummoned is not None and game.turn != self.lastTurnPositionChanged and self.faceUp):
+        if(self.turnSummoned is not None and game.turnCounter != self.lastTurnPositionChanged and self.faceUp):
             availableOptions = ['Change Battle Position']
 
         return availableOptions

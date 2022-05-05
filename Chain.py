@@ -6,6 +6,7 @@ class Chain:
     def __init__(self) -> None:
         self.chain = []
         self.spellSpeed = 1
+        self.cards = []
 
     def resolve(self, game):
         cards = []
@@ -13,7 +14,7 @@ class Chain:
             chainLink = self.chain.pop()
             chainLink.card.effect.activate(
                 game, chainLink.card, chainLink.previousCard)
-            if('Continuous-like' not in chainLink.card.effect.effectType):
+            if('Continuous-like' not in chainLink.card.effect.effectType and chainLink.card.cardType != 'monster'):
                 cards.append(chainLink.card)
 
         Mechanics.sendToGrave(cards)
@@ -21,3 +22,4 @@ class Chain:
     def addChainLink(self, card, previousCard):
         chainLink = ChainLink(card, previousCard)
         self.chain.append(chainLink)
+        self.cards.append(card)

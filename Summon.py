@@ -1,4 +1,4 @@
-from Mechanics import tribute
+from Mechanics import tribute, flip
 
 
 def summon(summonType, monster, game):
@@ -7,13 +7,13 @@ def summon(summonType, monster, game):
     elif(summonType == 'set'):
         set(monster)
     elif(summonType == 'flip'):
-        flipSummon(monster)
+        flipSummon(game, monster)
     elif(summonType == 'tribute'):
         tributeSummon(monster)
     elif(summonType == 'special'):
         specialSummon(monster)
 
-    monster.turnSummoned = game.turn
+    monster.turnSummoned = game.turnCounter
     monster.location = monster.currentOwner.monsterZone
     if(monster.effect is not None and monster.effect.initial is not None):
         monster.effect.initial(game, monster, None)
@@ -52,9 +52,9 @@ def set(monster):
     monster.currentOwner.monsterZone[zone] = monster
 
 
-def flipSummon(monster):
+def flipSummon(game, monster):
     monster.position = 'attack'
-    monster.faceUp = True
+    flip(game, monster)
 
 
 def tributeSummon(monster):

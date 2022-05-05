@@ -33,7 +33,7 @@ class Game():
 
     def test(self):
         self.p1.deck.shuffle()
-        self.p1.deck.draw(4)
+        self.p1.deck.draw(5)
         self.p2.deck.shuffle()
         self.p2.deck.draw(5)
 
@@ -60,7 +60,8 @@ class Game():
     def drawPhase(self):
         print(f'{self.turnPlayer.name} turn (Turn {self.turnCounter})\n')
         print('Draw Phase\n')
-        Mechanics.draw(self.turnPlayer, 1)
+        if(Mechanics.draw(self.turnPlayer, 1) is None):
+            self.endGame(self.otherPlayer)
 
     def standbyPhase(self):
         print('Standby Phase\n')
@@ -71,7 +72,7 @@ class Game():
 
         while(True):
             print(
-                '\n1. Next phase \n2. Select Card\n3. Activate Set Card\n4. Print Hand\n5. Print Field\n6. Print Life Points')
+                '\n1. Next phase \n2. Select Card In Hand\n3. Activate Set Card\n4. Print Hand\n5. Print Field\n6. Print Life Points\n7. Select Monster On Field')
             val = int(input('Choose Option: '))
             print('\n')
             if(val == 1):
@@ -81,17 +82,25 @@ class Game():
                 if(not response):
                     return
             elif(val == 2):
-                card = Mechanics.chooseCard(self.turnPlayer.hand.cards)
+                card = Mechanics.chooseCard(
+                    self.turnPlayer.hand.cards, self.turnPlayer)
                 self.selectCard(card)
             elif(val == 3):
                 availableCards = []
                 for card in self.turnPlayer.STZone:
                     if(card is None):
                         continue
-                    if(card.effect.condition(self, card, None)):
+                    if(card.effect.condition is None or card.effect.condition(self, card, None)):
                         availableCards.append(card)
 
-                cardToActivate = Mechanics.chooseCard(availableCards)
+                availableCards.append(None)
+
+                cardToActivate = Mechanics.chooseCard(
+                    availableCards, self.turnPlayer)
+
+                if(cardToActivate is None):
+                    return
+
                 Mechanics.createChain(self, cardToActivate, None)
             elif(val == 4):
                 self.turnPlayer.hand.printHand()
@@ -99,6 +108,14 @@ class Game():
                 print(f'\n{self.field}')
             elif(val == 6):
                 print(f'P1: {self.p1.lp}\nP2: {self.p2.lp}')
+            elif(val == 7):
+                card = Mechanics.chooseCard(
+                    self.turnPlayer.monsterZone, self.turnPlayer)
+
+                if(card is None):
+                    return
+
+                self.selectCard(card)
 
             self.checkEffects('continuousEffect')
 
@@ -123,7 +140,8 @@ class Game():
 
                 availableAttackers.append(None)
 
-                attacker = Mechanics.chooseCard(availableAttackers)
+                attacker = Mechanics.chooseCard(
+                    availableAttackers, self.turnPlayer)
 
                 if(attacker is None):
                     return
@@ -136,7 +154,8 @@ class Game():
                 if(not availableTargets):
                     availableTargets.append(self.otherPlayer)
 
-                target = Mechanics.chooseCard(availableTargets)
+                target = Mechanics.chooseCard(
+                    availableTargets, self.turnPlayer)
 
                 if(target == self.p1 or target == self.p2):
                     self.declareAttack(attacker, target, True)
@@ -150,7 +169,8 @@ class Game():
                     if(card.effect.condition(self, card, None)):
                         availableCards.append(card)
 
-                cardToActivate = Mechanics.chooseCard(availableCards)
+                cardToActivate = Mechanics.chooseCard(
+                    availableCards, self.turnPlayer)
                 Mechanics.createChain(self, cardToActivate, None)
             elif(val == 3):
                 response = Mechanics.checkForResponse(
@@ -244,8 +264,8 @@ class Game():
 
         # After damage calculation
         self.checkEffects('after damage calculation')
-        if(not directAttack and 'Flip' in target.monsterType):
-            Mechanics.createChain(self, target)
+        if(not directAttack and 'Flip' in target.monsterType and not target.faceUp):
+            Mechanics.createChain(self, target, None)
 
         # End of Damage Step
         if(not directAttack and target.position == 'attack'):
@@ -266,7 +286,9 @@ class Game():
 
     def performDamageCalculation(self, monster, target, directAttack):
         if(directAttack):
-            return Mechanics.inflictBattleDamage(target, monster.attack)
+            Mechanics.inflictBattleDamage(target, monster.attack)
+            self.checkWin()
+            return
 
         if(target.position == 'attack'):
             if(monster.attack > target.attack):
@@ -287,9 +309,9 @@ class Game():
             return
 
         if(self.p1.lp <= 0):
-            print('Player 2 Wins!')
+            self.endGame(self.p2)
         elif(self.p2.lp <= 0):
-            print('Player 1 Wins!')
+            self.endGame(self.p1)
 
     def checkEffects(self, check):
         if (not self.effects):
@@ -300,3 +322,7 @@ class Game():
                 effect[check](effect, self)
             elif(check in effect):
                 effect[check](effect, self)
+
+    def endGame(self, winner):
+        print(f'{winner.name} wins!')
+        quit()

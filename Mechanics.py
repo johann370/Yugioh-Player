@@ -8,13 +8,13 @@ def destroyByBattle(game, monster):
     if('Monsters not destroyed by battle' in monster.currentOwner.effects):
         return
 
-    destroy(monster)
+    destroy(game, monster)
 
 
 def destroy(game, card):
     if card is None:
         return
-    elif(card not in card.currentOwner.monsterZone):
+    elif(card not in card.currentOwner.monsterZone and card not in card.currentOwner.STZone):
         return
 
     idx = card.location.index(card)
@@ -34,7 +34,7 @@ def tribute(cards):
 
 
 def draw(player, numOfCards):
-    player.deck.draw(numOfCards)
+    return player.deck.draw(numOfCards)
 
 
 def setCard(card):
@@ -46,7 +46,7 @@ def setCard(card):
 
 
 def changeBattlePosition(monster, game):
-    if(monster.lastTurnPositionChanged == game.turn or monster.turnSummoned == game.turn):
+    if(monster.lastTurnPositionChanged == game.turnCounter or monster.turnSummoned == game.turnCounter):
         return
 
     if(monster.position == 'attack'):
@@ -55,6 +55,7 @@ def changeBattlePosition(monster, game):
         monster.position = 'attack'
         if(not monster.faceUp):
             flip(monster)
+    monster.lastTurnPositionChanged = game.turnCounter
 
 
 def inflictBattleDamage(player, damageAmount):
@@ -73,19 +74,22 @@ def activateCard(game, card):
         createChain(game, card)
 
 
-def flip(monster):
+def flip(game, monster):
     monster.faceUp = True
+    if('Flip' in monster.monsterType):
+        createChain(game, monster, None)
 
 
-def chooseCard(options):
+def chooseCard(options, player):
     for i in range(len(options)):
         if(options[i] is not None):
             if(isinstance(options[i], Player)):
                 print(f'{i}. {options[i].name}')
-            elif(options[i].faceUp is None or options[i].faceUp):
-                print(f'{i}. {options[i].name}')
+            elif(options[i].faceUp is None or options[i].faceUp or options[i].currentOwner == player):
+                print(
+                    f'{i}. {options[i].name} ({options[i].currentOwner.name})')
             elif(not options[i].faceUp):
-                print(f'{i}. Face Down')
+                print(f'{i}. Face Down ({options[i].currentOwner.name})')
         elif(options[i] is None):
             print(f'{i}. Cancel')
 
@@ -98,7 +102,7 @@ def chooseCard(options):
 
 
 def reveal(card):
-    print(card.cardName)
+    print(card.name)
 
 
 def checkForResponse(game, player, responses, previousCard):
@@ -114,10 +118,12 @@ def checkForResponse(game, player, responses, previousCard):
             continue
         if(card == previousCard):
             continue
+        if(game.chain is not None and card in game.chain.cards):
+            continue
         for response in responses:
-            if(card.effect.trigger is None):
+            if(card.effect.trigger is None) or response not in card.effect.trigger:
                 continue
-            elif (card.effect.condition(game, card, previousCard) and response in card.effect.trigger and card not in availableCards):
+            elif (card.effect.condition is None or card.effect.condition(game, card, previousCard) and card not in availableCards):
                 availableCards.append(card)
 
     if (not availableCards):
@@ -125,7 +131,7 @@ def checkForResponse(game, player, responses, previousCard):
 
     availableCards.append(None)
 
-    response = chooseCard(availableCards)
+    response = chooseCard(availableCards, player)
 
     if (response is None):
         return False
@@ -139,7 +145,7 @@ def checkForResponse(game, player, responses, previousCard):
 
 
 def createChain(game, card, previousCard):
-    if(game.chain):
+    if(game.chain and not game.chain.cards):
         return
 
     game.chain = Chain()
@@ -204,6 +210,6 @@ def sendToGrave(cards):
 
 
 def prompt(player, cards):
-    card = chooseCard(cards)
+    card = chooseCard(cards, player)
 
     return card

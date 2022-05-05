@@ -20,3 +20,6 @@ class Deck:
                 self.player.hand.cards.append(card)
             else:
                 print('Deck is empty')
+                return None
+
+        return True

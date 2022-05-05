@@ -44,7 +44,7 @@ def reinforcements(game, card, target):
 
     value = int(input('Enter target: '))
 
-    while(value < 0 or value > targets.length):
+    while(value < 0 or value > len(targets)):
         value = int(input('Enter target: '))
 
     target = targets[value]
@@ -54,7 +54,7 @@ def reinforcements(game, card, target):
     game.effects.append({
         'card': card,
         'check': 'end of turn',
-        'turnActivated': game.turn,
+        'turnActivated': game.turnCounter,
         'end of turn': reinforcementsEndEffect,
         'target': target,
     })
@@ -64,6 +64,8 @@ def reinforcementsEndEffect(effectInfo, game):
     monster = effectInfo['target']
     if(monster.location == monster.currentOwner.monsterZone or monster.location == monster.originalOwner.monsterZone):
         monster.attack -= 500
+
+    game.effects.remove(effectInfo)
 
 
 def trapHoleCondition(game, card, target):
@@ -83,18 +85,19 @@ def trapHole(game, card, target):
 
 
 def waboku(game, card, target):
-    card.currentOwner.effects.append['No battle damage taken']
-    card.currentOwner.effects.append['Monsters not destroyed by battle']
+    card.currentOwner.effects.append('No battle damage taken')
+    card.currentOwner.effects.append('Monsters not destroyed by battle')
 
     game.effects.append({
         'card': card,
         'check': 'end of turn',
-        'turnActivated': game.turn,
+        'turnActivated': game.turnCounter,
         'end of turn': wabokuEndEffect,
         'target': card.currentOwner,
     })
 
 
-def wabokuEndEffect(effectInfo):
+def wabokuEndEffect(effectInfo, game):
     effectInfo['target'].effects.remove('No battle damage taken')
     effectInfo['target'].effects.remove('Monsters not destroyed by battle')
+    game.effects.remove(effectInfo)

@@ -81,7 +81,7 @@ def swordsOfRevealingLight(game, card, target):
         if(monster is None):
             continue
         if(not monster.faceUp):
-            Mechanics.flip(monster)
+            Mechanics.flip(game, monster)
 
         if(monster.canDeclareAttack):
             monster.canDeclareAttack = False
@@ -90,7 +90,7 @@ def swordsOfRevealingLight(game, card, target):
     game.effects.append({
         'card': card,
         'check': 'end phase',
-        'turnActivated': game.turn,
+        'turnActivated': game.turnCounter,
         'opponent': opponent,
         'continuousEffect': swordsOfRevealingLightContinuous,
         'end phase': swordsOfRevealingLightEndTurn,
@@ -143,6 +143,7 @@ def monsterRebornCondition(game, card, target):
 
 
 def monsterReborn(game, card, target):
+    owner = card.currentOwner
     availableTargets = []
 
     for card in game.p1.graveyard:
@@ -153,21 +154,22 @@ def monsterReborn(game, card, target):
         if card.cardType == 'Monster':
             availableTargets.append(card)
 
-    monster = Mechanics.chooseCard(availableTargets)
+    monster = Mechanics.chooseCard(availableTargets, owner)
     # target(monster)
 
-    monster.currentOwner = card.currentOwner
+    monster.currentOwner = owner
     Summon.summon('special', monster, game)
 
 
 def deSpellCondition(game, card, target):
-    if(all(card is None for card in game.field.p1MonsterZone) and all(card is None for card in game.field.p2MonsterZone)):
+    if(all(card is None for card in game.field.p1STZone) and all(card is None for card in game.field.p2STZone)):
         return False
 
     return True
 
 
 def deSpell(game, card, target):
+    owner = card.currentOwner
     availableTargets = []
 
     for card in game.p1.STZone:
@@ -186,7 +188,7 @@ def deSpell(game, card, target):
         elif(not card.faceUp):
             availableTargets.append(card)
 
-    target = Mechanics.chooseCard(availableTargets)
+    target = Mechanics.chooseCard(availableTargets, owner)
     # target(target)
 
     if(not target.faceUp):
@@ -211,34 +213,41 @@ def changeOfHeart(game, card, target):
         if monster is not None:
             availableTargets.append(monster)
 
-    target = Mechanics.chooseCard(availableTargets)
+    target = Mechanics.chooseCard(availableTargets, card.currentOwner)
     # target(target)
+
+    idx = target.location.index(target)
+    target.location[idx] = None
 
     zone = Summon.chooseZone(card.currentOwner)
     card.currentOwner.monsterZone[zone] = target
-    card.location = card.currentOwner.monsterZone
+    target.location = card.currentOwner.monsterZone
 
     game.effects.append({
         'card': card,
         'check': 'end phase',
-        'turnActivated': game.turn,
+        'turnActivated': game.turnCounter,
         'end phase': changeOfHeartEndEffect,
         'target': target,
         'target player': opponent,
-        'location': card.location,
+        'location': target.location,
         'original location': opponent.monsterZone,
     })
 
 
 def changeOfHeartEndEffect(effectInfo, game):
     target = effectInfo['target']
-    if(game.turn is not effectInfo['turnActivated']):
+    if(game.turnCounter is not effectInfo['turnActivated']):
         return
 
     if(target.location is not effectInfo['location']):
         return
 
     zone = Summon.chooseZone(effectInfo['target player'])
-    effectInfo['location'].remove(target)
+
+    idx = target.location.index(target)
+    target.location[idx] = None
+
     effectInfo['original location'][zone] = target
     target.location = effectInfo['original location']
+    game.effects.remove(effectInfo)

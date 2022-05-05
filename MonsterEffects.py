@@ -9,6 +9,7 @@ def trapMasterCondition(game, card, target):
 
 
 def trapMaster(game, card, target):
+    owner = card.currentOwner
     availableTargets = []
 
     for card in game.p1.STZone:
@@ -27,7 +28,7 @@ def trapMaster(game, card, target):
         elif(not card.faceUp):
             availableTargets.append(card)
 
-    target = Mechanics.chooseCard(availableTargets)
+    target = Mechanics.chooseCard(availableTargets, owner)
     # target(target)
 
     if(not target.faceUp):
@@ -67,20 +68,27 @@ def wallOfIllusionEndEffect(effectInfo, game):
 
 
 def manEaterBugCondition(game, card, target):
-    if(all(card is None for card in game.p1.MonsterZone) and all(card is None for card in game.p2.MonsterZone)):
+    if(all(card is None for card in game.p1.monsterZone) and all(card is None for card in game.p2.monsterZone)):
         return False
 
     return True
 
 
 def manEaterBug(game, card, target):
+    owner = card.currentOwner
     availableTargets = []
     emptyZone = []
 
-    for card in game.p2.MonsterZone:
+    for card in game.p2.monsterZone:
         if(card is None):
             continue
-        if(card.faceUp and card.cardType == 'monster'):
-            availableTargets.append(card)
-        elif(not card.faceUp):
-            emptyZone.append(card)
+        availableTargets.append(card)
+
+    for card in game.p1.monsterZone:
+        if(card is None):
+            continue
+        availableTargets.append(card)
+
+    # Mechanics.target(monster)
+    monster = Mechanics.chooseCard(availableTargets, owner)
+    Mechanics.destroy(game, monster)
