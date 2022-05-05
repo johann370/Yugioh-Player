@@ -1,4 +1,4 @@
-import Mechanics
+import mechanics
 
 
 def justDessertsCondition(game, card, target):
@@ -16,7 +16,7 @@ def justDesserts(game, card, target):
         if monster is not None:
             damageAmount += 500
 
-    Mechanics.inflictDamage(opponent, damageAmount)
+    mechanics.inflictDamage(opponent, damageAmount)
 
 
 def reinforcementsCondition(game, card, target):
@@ -81,7 +81,7 @@ def trapHoleCondition(game, card, target):
 
 def trapHole(game, card, target):
     # Mechanics.target(monster)
-    Mechanics.destroy(game, target)
+    mechanics.destroy(game, target)
 
 
 def waboku(game, card, target):

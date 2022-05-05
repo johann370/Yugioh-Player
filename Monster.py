@@ -1,5 +1,5 @@
-from Card import Card
-from Summon import summon
+from card import Card
+from summon import summon
 
 
 class Monster(Card):

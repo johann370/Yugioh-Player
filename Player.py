@@ -1,7 +1,7 @@
-from Banished import Banished
-from Deck import Deck
-from Graveyard import Graveyard
-from Hand import Hand
+from banished import Banished
+from deck import Deck
+from graveyard import Graveyard
+from hand import Hand
 
 
 class Player:

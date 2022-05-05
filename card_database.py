@@ -1,10 +1,10 @@
-from Monster import Monster
-from Trap import Trap
-from Spell import Spell
-from Effect import Effect
-import SpellEffects
-import TrapEffects
-import MonsterEffects
+from monster import Monster
+from trap import Trap
+from spell import Spell
+from effect import Effect
+import spell_effects
+import trap_effects
+import monster_effects
 
 
 def getCard(cardName):
@@ -53,8 +53,8 @@ def battleOx():
 
 
 def wallOfIllusion():
-    effect = Effect(effect=MonsterEffects.wallOfIllusion, cost=None,
-                    condition=None, trigger=['Continuous'], responses=[None], effectType=['Trigger'], initial=MonsterEffects.wallOfIllusion)
+    effect = Effect(effect=monster_effects.wallOfIllusion, cost=None,
+                    condition=None, trigger=['Continuous'], responses=[None], effectType=['Trigger'], initial=monster_effects.wallOfIllusion)
 
     return Monster(name='Wall of Illusion', attack=1000, defense=1850, level=4, monsterType=['Fiend', 'Effect'], attribute='Dark', effect=effect)
 
@@ -64,98 +64,98 @@ def giantSoldier():
 
 
 def trapMaster():
-    effect = Effect(effect=MonsterEffects.trapMaster, cost=None,
-                    condition=MonsterEffects.trapMasterCondition, trigger=['Flip'], responses=['Any', 'Destroy trap'], effectType=['Flip'])
+    effect = Effect(effect=monster_effects.trapMaster, cost=None,
+                    condition=monster_effects.trapMasterCondition, trigger=['Flip'], responses=['Any', 'Destroy trap'], effectType=['Flip'])
 
     return Monster(name='Trap Master', attack=500, defense=1100, level=3, monsterType=['Warrior', 'Flip', 'Effect'], attribute='Earth', effect=effect)
 
 
 def manEaterBug():
-    effect = Effect(effect=MonsterEffects.manEaterBug, cost=None,
-                    condition=MonsterEffects.manEaterBugCondition, trigger=['Flip'], responses=['Any', 'Destroy monster'], effectType=['Flip'])
+    effect = Effect(effect=monster_effects.manEaterBug, cost=None,
+                    condition=monster_effects.manEaterBugCondition, trigger=['Flip'], responses=['Any', 'Destroy monster'], effectType=['Flip'])
 
     return Monster(name='Man-Eater Bug', attack=450, defense=600, level=2, monsterType=['Insect', 'Flip', 'Effect'], attribute='Earth', effect=effect)
 
 
 def potOfGreed():
-    effect = Effect(effect=SpellEffects.potOfGreed,
+    effect = Effect(effect=spell_effects.potOfGreed,
                     cost=None, condition=None, trigger=None, responses=['Any', 'Draw cards', 'Activate spell'], effectType=['Effect'])
 
     return Spell(name='Pot of Greed', effect=effect, spellType='Normal', spellSpeed=1)
 
 
 def monsterReborn():
-    effect = Effect(effect=SpellEffects.monsterReborn, cost=None,
-                    condition=SpellEffects.monsterRebornCondition, trigger=None, responses=['Any', 'Special summon monster', 'Activate spell'], effectType=['Effect'])
+    effect = Effect(effect=spell_effects.monsterReborn, cost=None,
+                    condition=spell_effects.monsterRebornCondition, trigger=None, responses=['Any', 'Special summon monster', 'Activate spell'], effectType=['Effect'])
 
     return Spell(name='Monster Reborn', effect=effect, spellType='Normal', spellSpeed=1)
 
 
 def raigeki():
-    effect = Effect(effect=SpellEffects.raigeki, cost=None,
-                    condition=SpellEffects.raigekiCondition, trigger=None, responses=['Any', 'Destroy monster', 'Activate spell'], effectType=['Effect'])
+    effect = Effect(effect=spell_effects.raigeki, cost=None,
+                    condition=spell_effects.raigekiCondition, trigger=None, responses=['Any', 'Destroy monster', 'Activate spell'], effectType=['Effect'])
 
     return Spell(name='Raigeki', effect=effect, spellType='Normal', spellSpeed=1)
 
 
 def darkHole():
-    effect = Effect(effect=SpellEffects.darkHole, cost=None,
-                    condition=SpellEffects.darkHoleCondition, trigger=None, responses=['Any', 'Send monster to graveyard', 'Activate spell'], effectType=['Effect'])
+    effect = Effect(effect=spell_effects.darkHole, cost=None,
+                    condition=spell_effects.darkHoleCondition, trigger=None, responses=['Any', 'Send monster to graveyard', 'Activate spell'], effectType=['Effect'])
 
     return Spell(name='Dark Hole', effect=effect, spellType='Normal', spellSpeed=1)
 
 
 def changeOfHeart():
-    effect = Effect(effect=SpellEffects.changeOfHeart, cost=None,
-                    condition=SpellEffects.changeOfHeartCondition, trigger=None, responses=['Any', 'Activate spell'], effectType=['Effect'])
+    effect = Effect(effect=spell_effects.changeOfHeart, cost=None,
+                    condition=spell_effects.changeOfHeartCondition, trigger=None, responses=['Any', 'Activate spell'], effectType=['Effect'])
 
     return Spell(name='Change of Heart', effect=effect, spellType='Normal', spellSpeed=1)
 
 
 def deSpell():
-    effect = Effect(effect=SpellEffects.deSpell, cost=None,
-                    condition=SpellEffects.deSpellCondition, trigger=None, responses=['Any', 'Activate spell', 'Destroy spell'], effectType=['Effect'])
+    effect = Effect(effect=spell_effects.deSpell, cost=None,
+                    condition=spell_effects.deSpellCondition, trigger=None, responses=['Any', 'Activate spell', 'Destroy spell'], effectType=['Effect'])
 
     return Spell(name='De-Spell', effect=effect, spellType='Normal', spellSpeed=1)
 
 
 def fissure():
-    effect = Effect(effect=SpellEffects.fissure, cost=None,
-                    condition=SpellEffects.fissureCondition, trigger=None, responses=['Any', 'Activate spell', 'Destroy monster'], effectType=['Effect'])
+    effect = Effect(effect=spell_effects.fissure, cost=None,
+                    condition=spell_effects.fissureCondition, trigger=None, responses=['Any', 'Activate spell', 'Destroy monster'], effectType=['Effect'])
 
     return Spell(name='Fissure', effect=effect, spellType='Normal', spellSpeed=1)
 
 
 def swordsOfRevealing():
-    effect = Effect(effect=SpellEffects.swordsOfRevealingLight,
+    effect = Effect(effect=spell_effects.swordsOfRevealingLight,
                     cost=None, condition=None, trigger=None, responses=['Any', 'Activate spell'], effectType=['Condition', 'Effect', 'Continuous-like'])
 
     return Spell(name='Swords Of Revealing Light', effect=effect, spellType='Continuous-like', spellSpeed=1)
 
 
 def reinforcements():
-    effect = Effect(effect=TrapEffects.reinforcements, cost=None,
-                    condition=TrapEffects.reinforcementsCondition, trigger=['Any', 'modify atk/def'], responses=['Any', 'Activate trap', 'Modify atk/def'], effectType=['Effect'])
+    effect = Effect(effect=trap_effects.reinforcements, cost=None,
+                    condition=trap_effects.reinforcementsCondition, trigger=['Any', 'modify atk/def'], responses=['Any', 'Activate trap', 'Modify atk/def'], effectType=['Effect'])
 
     return Trap(name='Reinforcements', effect=effect, trapType='Normal', spellSpeed=2)
 
 
 def trapHole():
-    effect = Effect(effect=TrapEffects.trapHole, cost=None, condition=TrapEffects.trapHoleCondition, trigger=[
+    effect = Effect(effect=trap_effects.trapHole, cost=None, condition=trap_effects.trapHoleCondition, trigger=[
                     'When Opponent Normal Summons', 'When Opponent Flip Summons'], responses=['Any', 'Activate trap', 'Destroy monster'], effectType=['Activation requirement', 'Effect'])
 
     return Trap(name='Trap Hole', effect=effect, trapType='Normal', spellSpeed=2)
 
 
 def waboku():
-    effect = Effect(effect=TrapEffects.waboku, cost=None,
+    effect = Effect(effect=trap_effects.waboku, cost=None,
                     condition=None, trigger=['Any'], responses=['Any', 'Activate trap'], effectType=['Effect'])
 
     return Trap(name='Waboku', effect=effect, trapType='Normal', spellSpeed=2)
 
 
 def justDesserts():
-    effect = Effect(effect=TrapEffects.justDesserts, cost=None,
-                    condition=TrapEffects.justDessertsCondition, trigger=['Any'], responses=['Any', 'Activate trap', 'Inflict damage'], effectType=['Effect'])
+    effect = Effect(effect=trap_effects.justDesserts, cost=None,
+                    condition=trap_effects.justDessertsCondition, trigger=['Any'], responses=['Any', 'Activate trap', 'Inflict damage'], effectType=['Effect'])
 
     return Trap(name='Just Desserts', effect=effect, trapType='Normal', spellSpeed=2)

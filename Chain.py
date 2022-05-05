@@ -1,5 +1,5 @@
-from ChainLink import ChainLink
-import Mechanics
+from chain_link import ChainLink
+import mechanics
 
 
 class Chain:
@@ -17,7 +17,7 @@ class Chain:
             if('Continuous-like' not in chainLink.card.effect.effectType and chainLink.card.cardType != 'monster'):
                 cards.append(chainLink.card)
 
-        Mechanics.sendToGrave(cards)
+        mechanics.sendToGrave(cards)
 
     def addChainLink(self, card, previousCard):
         chainLink = ChainLink(card, previousCard)

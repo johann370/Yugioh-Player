@@ -1,4 +1,4 @@
-from Mechanics import tribute, flip
+from mechanics import tribute, flip
 
 
 def summon(summonType, monster, game):

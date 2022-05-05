@@ -1,7 +1,7 @@
-from Chain import Chain
+from chain import Chain
 from dataclasses import Field, field
 
-from Player import Player
+from player import Player
 
 
 def destroyByBattle(game, monster):

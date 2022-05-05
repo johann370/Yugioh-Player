@@ -1,4 +1,4 @@
-from CardDatabase import getCard
+from card_database import getCard
 
 
 def createDeck(deckList):

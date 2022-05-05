@@ -1,4 +1,4 @@
-import Mechanics
+import mechanics
 
 
 def trapMasterCondition(game, card, target):
@@ -28,14 +28,14 @@ def trapMaster(game, card, target):
         elif(not card.faceUp):
             availableTargets.append(card)
 
-    target = Mechanics.chooseCard(availableTargets, owner)
+    target = mechanics.chooseCard(availableTargets, owner)
     # target(target)
 
     if(not target.faceUp):
-        Mechanics.reveal(target)
+        mechanics.reveal(target)
 
     if(target.cardType == 'trap'):
-        Mechanics.destroy(game, target)
+        mechanics.destroy(game, target)
 
 
 def wallOfIllusion(game, card, target):
@@ -90,5 +90,5 @@ def manEaterBug(game, card, target):
         availableTargets.append(card)
 
     # Mechanics.target(monster)
-    monster = Mechanics.chooseCard(availableTargets, owner)
-    Mechanics.destroy(game, monster)
+    monster = mechanics.chooseCard(availableTargets, owner)
+    mechanics.destroy(game, monster)

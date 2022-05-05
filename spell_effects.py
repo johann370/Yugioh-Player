@@ -1,9 +1,9 @@
-import Mechanics
-import Summon
+import mechanics
+import summon
 
 
 def potOfGreed(game, card, target):
-    Mechanics.draw(card.currentOwner, 2)
+    mechanics.draw(card.currentOwner, 2)
 
 
 def raigekiCondition(game, card, target):
@@ -19,7 +19,7 @@ def raigeki(game, card, target):
     for monster in opponent.monsterZone:
         if(monster is None):
             continue
-        Mechanics.destroy(game, monster)
+        mechanics.destroy(game, monster)
 
 
 def darkHoleCondition(game, card, target):
@@ -35,12 +35,12 @@ def darkHole(game, card, target):
     for monster in field.p1MonsterZone:
         if(monster is None):
             continue
-        Mechanics.destroy(game, monster)
+        mechanics.destroy(game, monster)
 
     for monster in field.p2MonsterZone:
         if(monster is None):
             continue
-        Mechanics.destroy(game, monster)
+        mechanics.destroy(game, monster)
 
 
 def fissureCondition(game, card, target):
@@ -71,7 +71,7 @@ def fissure(game, card, target):
         elif(monster.attack < monsterToDestroy.attack):
             monsterToDestroy = monster
 
-    Mechanics.destroy(game, monsterToDestroy)
+    mechanics.destroy(game, monsterToDestroy)
 
 
 def swordsOfRevealingLight(game, card, target):
@@ -81,7 +81,7 @@ def swordsOfRevealingLight(game, card, target):
         if(monster is None):
             continue
         if(not monster.faceUp):
-            Mechanics.flip(game, monster)
+            mechanics.flip(game, monster)
 
         if(monster.canDeclareAttack):
             monster.canDeclareAttack = False
@@ -121,7 +121,7 @@ def swordsOfRevealingLightEndTurn(effectInfo, game):
 def swordsOfRevealingLightEndEffect(effectInfo, game):
     for monster in effectInfo['affectedMonsters']:
         monster.canDeclareAttack = True
-    Mechanics.destroy(game, effectInfo['card'])
+    mechanics.destroy(game, effectInfo['card'])
     game.effects.remove(effectInfo)
 
 
@@ -154,11 +154,11 @@ def monsterReborn(game, card, target):
         if card.cardType == 'Monster':
             availableTargets.append(card)
 
-    monster = Mechanics.chooseCard(availableTargets, owner)
+    monster = mechanics.chooseCard(availableTargets, owner)
     # target(monster)
 
     monster.currentOwner = owner
-    Summon.summon('special', monster, game)
+    summon.summon('special', monster, game)
 
 
 def deSpellCondition(game, card, target):
@@ -188,14 +188,14 @@ def deSpell(game, card, target):
         elif(not card.faceUp):
             availableTargets.append(card)
 
-    target = Mechanics.chooseCard(availableTargets, owner)
+    target = mechanics.chooseCard(availableTargets, owner)
     # target(target)
 
     if(not target.faceUp):
-        Mechanics.reveal(target)
+        mechanics.reveal(target)
 
     if(target.cardType == 'spell'):
-        Mechanics.destroy(game, target)
+        mechanics.destroy(game, target)
 
 
 def changeOfHeartCondition(game, card, target):
@@ -213,13 +213,13 @@ def changeOfHeart(game, card, target):
         if monster is not None:
             availableTargets.append(monster)
 
-    target = Mechanics.chooseCard(availableTargets, card.currentOwner)
+    target = mechanics.chooseCard(availableTargets, card.currentOwner)
     # target(target)
 
     idx = target.location.index(target)
     target.location[idx] = None
 
-    zone = Summon.chooseZone(card.currentOwner)
+    zone = summon.chooseZone(card.currentOwner)
     card.currentOwner.monsterZone[zone] = target
     target.location = card.currentOwner.monsterZone
 
@@ -243,7 +243,7 @@ def changeOfHeartEndEffect(effectInfo, game):
     if(target.location is not effectInfo['location']):
         return
 
-    zone = Summon.chooseZone(effectInfo['target player'])
+    zone = summon.chooseZone(effectInfo['target player'])
 
     idx = target.location.index(target)
     target.location[idx] = None
