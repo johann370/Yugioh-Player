@@ -2,252 +2,252 @@ import mechanics
 import summon
 
 
-def potOfGreed(game, card, target):
-    mechanics.draw(card.currentOwner, 2)
+def pot_of_greed(game, card, target):
+    mechanics.draw(card.current_owner, 2)
 
 
-def raigekiCondition(game, card, target):
-    opponent = card.currentOwner.opponent
-    if(all(card is None for card in opponent.monsterZone)):
+def raigeki_condition(game, card, target):
+    opponent = card.current_owner.opponent
+    if(all(card is None for card in opponent.monster_zone)):
         return False
 
     return True
 
 
 def raigeki(game, card, target):
-    opponent = card.currentOwner.opponent
-    for monster in opponent.monsterZone:
+    opponent = card.current_owner.opponent
+    for monster in opponent.monster_zone:
         if(monster is None):
             continue
         mechanics.destroy(game, monster)
 
 
-def darkHoleCondition(game, card, target):
+def dark_hole_condition(game, card, target):
     field = game.field
-    if(all(card is None for card in field.p1MonsterZone) and all(card is None for card in field.p2MonsterZone)):
+    if(all(card is None for card in field.p1_monster_zone) and all(card is None for card in field.p2_monster_zone)):
         return False
 
     return True
 
 
-def darkHole(game, card, target):
+def dark_hole(game, card, target):
     field = game.field
-    for monster in field.p1MonsterZone:
+    for monster in field.p1_monster_zone:
         if(monster is None):
             continue
         mechanics.destroy(game, monster)
 
-    for monster in field.p2MonsterZone:
+    for monster in field.p2_monster_zone:
         if(monster is None):
             continue
         mechanics.destroy(game, monster)
 
 
-def fissureCondition(game, card, target):
-    opponent = card.currentOwner.opponent
+def fissure_condition(game, card, target):
+    opponent = card.current_owner.opponent
     # check if there are monsters in opponent's field
-    if(all(card is None for card in opponent.monsterZone)):
+    if(all(card is None for card in opponent.monster_zone)):
         return False
 
     # check if there are face up monsters
-    faceUpMonstersInField = False
-    for monster in opponent.monsterZone:
+    face_up_monsters_in_field = False
+    for monster in opponent.monster_zone:
         if(monster is None):
             continue
-        if(monster.faceUp):
-            faceUpMonstersInField = True
+        if(monster.face_up):
+            face_up_monsters_in_field = True
 
-    return faceUpMonstersInField
+    return face_up_monsters_in_field
 
 
 def fissure(game, card, target):
-    opponent = card.currentOwner.opponent
-    monsterToDestroy = None
-    for monster in opponent.monsterZone:
+    opponent = card.current_owner.opponent
+    monster_to_destroy = None
+    for monster in opponent.monster_zone:
         if(monster is None):
             continue
-        if(monsterToDestroy is None):
-            monsterToDestroy = monster
-        elif(monster.attack < monsterToDestroy.attack):
-            monsterToDestroy = monster
+        if(monster_to_destroy is None):
+            monster_to_destroy = monster
+        elif(monster.attack < monster_to_destroy.attack):
+            monster_to_destroy = monster
 
-    mechanics.destroy(game, monsterToDestroy)
+    mechanics.destroy(game, monster_to_destroy)
 
 
-def swordsOfRevealingLight(game, card, target):
-    opponent = card.currentOwner.opponent
-    affectedMonsters = []
-    for monster in opponent.monsterZone:
+def swords_of_revealing_light(game, card, target):
+    opponent = card.current_owner.opponent
+    affected_monsters = []
+    for monster in opponent.monster_zone:
         if(monster is None):
             continue
-        if(not monster.faceUp):
+        if(not monster.face_up):
             mechanics.flip(game, monster)
 
-        if(monster.canDeclareAttack):
-            monster.canDeclareAttack = False
-            affectedMonsters.append(monster)
+        if(monster.can_declare_attack):
+            monster.can_declare_attack = False
+            affected_monsters.append(monster)
 
     game.effects.append({
         'card': card,
         'check': 'end phase',
-        'turnActivated': game.turnCounter,
+        'turnActivated': game.turn_counter,
         'opponent': opponent,
-        'continuousEffect': swordsOfRevealingLightContinuous,
-        'end phase': swordsOfRevealingLightEndTurn,
+        'continuous effect': swords_of_revealing_light_continuous,
+        'end phase': swords_of_revealing_light_end_turn,
         'counter': 0,
-        'affectedMonsters': affectedMonsters,
-        'end effect': swordsOfRevealingLightEndEffect
+        'affectedMonsters': affected_monsters,
+        'end effect': swords_of_revealing_light_end_effect
     })
 
 
-def swordsOfRevealingLightContinuous(effectInfo, game):
-    opponent = effectInfo['opponent']
-    for monster in opponent.monsterZone:
+def swords_of_revealing_light_continuous(effect_info, game):
+    opponent = effect_info['opponent']
+    for monster in opponent.monster_zone:
         if (monster is None):
             continue
-        if(monster.canDeclareAttack):
-            monster.canDeclareAttack = False
-            effectInfo['affectedMonsters'].append(monster)
+        if(monster.can_declare_attack):
+            monster.can_declare_attack = False
+            effect_info['affectedMonsters'].append(monster)
 
 
-def swordsOfRevealingLightEndTurn(effectInfo, game):
-    if(game.turnPlayer == effectInfo['opponent']):
-        effectInfo['counter'] = effectInfo['counter'] + 1
+def swords_of_revealing_light_end_turn(effect_info, game):
+    if(game.turn_player == effect_info['opponent']):
+        effect_info['counter'] = effect_info['counter'] + 1
 
-    if(effectInfo['counter'] == 3):
-        swordsOfRevealingLightEndEffect(effectInfo, game)
-
-
-def swordsOfRevealingLightEndEffect(effectInfo, game):
-    for monster in effectInfo['affectedMonsters']:
-        monster.canDeclareAttack = True
-    mechanics.destroy(game, effectInfo['card'])
-    game.effects.remove(effectInfo)
+    if(effect_info['counter'] == 3):
+        swords_of_revealing_light_end_effect(effect_info, game)
 
 
-def monsterRebornCondition(game, card, target):
+def swords_of_revealing_light_end_effect(effect_info, game):
+    for monster in effect_info['affectedMonsters']:
+        monster.can_declare_attack = True
+    mechanics.destroy(game, effect_info['card'])
+    game.effects.remove(effect_info)
+
+
+def monster_reborn_condition(game, card, target):
     if(not game.p1.graveyard.cards and not game.p2.graveyard.cards):
         return False
 
-    monstersInGrave = False
+    monsters_in_grave = False
 
     for card in game.p1.graveyard.cards:
-        if card.cardType == 'Monster':
-            monstersInGrave = True
+        if card.card_type == 'Monster':
+            monsters_in_grave = True
 
     for card in game.p2.graveyard.cards:
-        if card.cardType == 'Monster':
-            monstersInGrave = True
+        if card.card_type == 'Monster':
+            monsters_in_grave = True
 
-    return monstersInGrave
+    return monsters_in_grave
 
 
-def monsterReborn(game, card, target):
-    owner = card.currentOwner
-    availableTargets = []
+def monster_reborn(game, card, target):
+    owner = card.current_owner
+    available_targets = []
 
     for card in game.p1.graveyard:
-        if card.cardType == 'Monster':
-            availableTargets.append(card)
+        if card.card_type == 'Monster':
+            available_targets.append(card)
 
     for card in game.p2.graveyard:
-        if card.cardType == 'Monster':
-            availableTargets.append(card)
+        if card.card_type == 'Monster':
+            available_targets.append(card)
 
-    monster = mechanics.chooseCard(availableTargets, owner)
+    monster = mechanics.choose_card(available_targets, owner)
     # target(monster)
 
-    monster.currentOwner = owner
+    monster.current_owner = owner
     summon.summon('special', monster, game)
 
 
-def deSpellCondition(game, card, target):
-    if(all(card is None for card in game.field.p1STZone) and all(card is None for card in game.field.p2STZone)):
+def de_spell_condition(game, card, target):
+    if(all(card is None for card in game.field.p1_st_zone) and all(card is None for card in game.field.p2_st_zone)):
         return False
 
     return True
 
 
-def deSpell(game, card, target):
-    owner = card.currentOwner
-    availableTargets = []
+def de_spell(game, card, target):
+    owner = card.current_owner
+    available_targets = []
 
-    for card in game.p1.STZone:
+    for card in game.p1.st_zone:
         if(card is None):
             continue
-        if(card.faceUp and card.cardType == 'spell'):
-            availableTargets.append(card)
-        elif(not card.faceUp):
-            availableTargets.append(card)
+        if(card.face_up and card.card_type == 'spell'):
+            available_targets.append(card)
+        elif(not card.face_up):
+            available_targets.append(card)
 
-    for card in game.p2.STZone:
+    for card in game.p2.st_zone:
         if(card is None):
             continue
-        if(card.faceUp and card.cardType == 'spell'):
-            availableTargets.append(card)
-        elif(not card.faceUp):
-            availableTargets.append(card)
+        if(card.face_up and card.card_type == 'spell'):
+            available_targets.append(card)
+        elif(not card.face_up):
+            available_targets.append(card)
 
-    target = mechanics.chooseCard(availableTargets, owner)
+    target = mechanics.choose_card(available_targets, owner)
     # target(target)
 
-    if(not target.faceUp):
+    if(not target.face_up):
         mechanics.reveal(target)
 
-    if(target.cardType == 'spell'):
+    if(target.card_type == 'spell'):
         mechanics.destroy(game, target)
 
 
-def changeOfHeartCondition(game, card, target):
-    opponent = card.currentOwner.opponent
-    if(all(card is None for card in opponent.monsterZone)):
+def change_of_heart_condition(game, card, target):
+    opponent = card.current_owner.opponent
+    if(all(card is None for card in opponent.monster_zone)):
         return False
 
     return True
 
 
-def changeOfHeart(game, card, target):
-    opponent = card.currentOwner.opponent
-    availableTargets = []
-    for monster in opponent.monsterZone:
+def change_of_heart(game, card, target):
+    opponent = card.current_owner.opponent
+    available_targets = []
+    for monster in opponent.monster_zone:
         if monster is not None:
-            availableTargets.append(monster)
+            available_targets.append(monster)
 
-    target = mechanics.chooseCard(availableTargets, card.currentOwner)
+    target = mechanics.choose_card(available_targets, card.current_owner)
     # target(target)
 
     idx = target.location.index(target)
     target.location[idx] = None
 
-    zone = summon.chooseZone(card.currentOwner)
-    card.currentOwner.monsterZone[zone] = target
-    target.location = card.currentOwner.monsterZone
+    zone = summon.choose_zone(card.current_owner)
+    card.current_owner.monster_zone[zone] = target
+    target.location = card.current_owner.monster_zone
 
     game.effects.append({
         'card': card,
         'check': 'end phase',
-        'turnActivated': game.turnCounter,
-        'end phase': changeOfHeartEndEffect,
+        'turnActivated': game.turn_counter,
+        'end phase': change_of_heart_end_effect,
         'target': target,
         'target player': opponent,
         'location': target.location,
-        'original location': opponent.monsterZone,
+        'original location': opponent.monster_zone,
     })
 
 
-def changeOfHeartEndEffect(effectInfo, game):
-    target = effectInfo['target']
-    if(game.turnCounter is not effectInfo['turnActivated']):
+def change_of_heart_end_effect(effect_info, game):
+    target = effect_info['target']
+    if(game.turn_counter is not effect_info['turnActivated']):
         return
 
-    if(target.location is not effectInfo['location']):
+    if(target.location is not effect_info['location']):
         return
 
-    zone = summon.chooseZone(effectInfo['target player'])
+    zone = summon.choose_zone(effect_info['target player'])
 
     idx = target.location.index(target)
     target.location[idx] = None
 
-    effectInfo['original location'][zone] = target
-    target.location = effectInfo['original location']
-    game.effects.remove(effectInfo)
+    effect_info['original location'][zone] = target
+    target.location = effect_info['original location']
+    game.effects.remove(effect_info)

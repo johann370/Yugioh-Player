@@ -12,8 +12,8 @@ class Player:
         self.graveyard = Graveyard()
         self.banished = Banished()
         self.hand = Hand([], 0)
-        self.monsterZone = [None] * 5
-        self.STZone = [None] * 5
-        self.fieldSpell = None
+        self.monster_zone = [None] * 5
+        self.st_zone = [None] * 5
+        self.field_spell = None
         self.effects = []
         self.opponent = None

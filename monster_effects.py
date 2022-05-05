@@ -1,60 +1,60 @@
 import mechanics
 
 
-def trapMasterCondition(game, card, target):
-    if(all(card is None for card in game.p1.STZone) and all(card is None for card in game.p2.STZone)):
+def trap_master_condition(game, card, target):
+    if(all(card is None for card in game.p1.st_zone) and all(card is None for card in game.p2.st_zone)):
         return False
 
     return True
 
 
-def trapMaster(game, card, target):
-    owner = card.currentOwner
-    availableTargets = []
+def trap_master(game, card, target):
+    owner = card.current_owner
+    available_targets = []
 
-    for card in game.p1.STZone:
+    for card in game.p1.st_zone:
         if(card is None):
             continue
-        if(card.faceUp and card.cardType == 'trap'):
-            availableTargets.append(card)
-        elif(not card.faceUp):
-            availableTargets.append(card)
+        if(card.face_up and card.card_type == 'trap'):
+            available_targets.append(card)
+        elif(not card.face_up):
+            available_targets.append(card)
 
-    for card in game.p2.STZone:
+    for card in game.p2.st_zone:
         if(card is None):
             continue
-        if(card.faceUp and card.cardType == 'trap'):
-            availableTargets.append(card)
-        elif(not card.faceUp):
-            availableTargets.append(card)
+        if(card.face_up and card.card_type == 'trap'):
+            available_targets.append(card)
+        elif(not card.face_up):
+            available_targets.append(card)
 
-    target = mechanics.chooseCard(availableTargets, owner)
+    target = mechanics.choose_card(available_targets, owner)
     # target(target)
 
-    if(not target.faceUp):
+    if(not target.face_up):
         mechanics.reveal(target)
 
-    if(target.cardType == 'trap'):
+    if(target.card_type == 'trap'):
         mechanics.destroy(game, target)
 
 
-def wallOfIllusion(game, card, target):
-    opponent = card.currentOwner.opponent
+def wall_of_illusion(game, card, target):
+    opponent = card.current_owner.opponent
     game.effects.append({
         'card': card,
         'check': 'after damage calculation',
-        'after damage calculation': wallOfIllusionBattle,
+        'after damage calculation': wall_of_illusion_battle,
         'opponent': opponent,
-        'end effect': wallOfIllusionEndEffect
+        'end effect': wall_of_illusion_end_effect
     })
 
 
-def wallOfIllusionBattle(effectInfo, game):
-    if(effectInfo['card'] != game.battle['defender']):
+def wall_of_illusion_battle(effect_info, game):
+    if(effect_info['card'] != game.battle['defender']):
         return
 
     attacker = game.battle['attacker']
-    if(attacker.location is not effectInfo['opponent'].monsterZone):
+    if(attacker.location is not effect_info['opponent'].monster_zone):
         return
 
     idx = attacker.location.index(attacker)
@@ -63,32 +63,31 @@ def wallOfIllusionBattle(effectInfo, game):
     attacker.location = attacker.owner.hand
 
 
-def wallOfIllusionEndEffect(effectInfo, game):
-    game.effects.remove(effectInfo)
+def wall_of_illusion_end_effect(effect_info, game):
+    game.effects.remove(effect_info)
 
 
-def manEaterBugCondition(game, card, target):
-    if(all(card is None for card in game.p1.monsterZone) and all(card is None for card in game.p2.monsterZone)):
+def man_eater_bug_condition(game, card, target):
+    if(all(card is None for card in game.p1.monster_zone) and all(card is None for card in game.p2.monster_zone)):
         return False
 
     return True
 
 
-def manEaterBug(game, card, target):
-    owner = card.currentOwner
-    availableTargets = []
-    emptyZone = []
+def man_eater_bug(game, card, target):
+    owner = card.current_owner
+    available_targets = []
 
-    for card in game.p2.monsterZone:
+    for card in game.p2.monster_zone:
         if(card is None):
             continue
-        availableTargets.append(card)
+        available_targets.append(card)
 
-    for card in game.p1.monsterZone:
+    for card in game.p1.monster_zone:
         if(card is None):
             continue
-        availableTargets.append(card)
+        available_targets.append(card)
 
     # Mechanics.target(monster)
-    monster = mechanics.chooseCard(availableTargets, owner)
+    monster = mechanics.choose_card(available_targets, owner)
     mechanics.destroy(game, monster)

@@ -6,17 +6,17 @@ class Deck:
         self.cards = cards
         self.player = player
         for card in cards:
-            card.setOwner(player)
+            card.set_owner(player)
             card.location = self
 
     def shuffle(self):
         random.shuffle(self.cards)
 
-    def draw(self, numOfCards):
-        for i in range(numOfCards):
+    def draw(self, num_of_cards):
+        for i in range(num_of_cards):
             if(self.cards):
                 card = self.cards.pop(0)
-                card.location = card.currentOwner.hand.cards
+                card.location = card.current_owner.hand.cards
                 self.player.hand.cards.append(card)
             else:
                 print('Deck is empty')

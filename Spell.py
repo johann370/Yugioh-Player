@@ -2,28 +2,28 @@ from card import Card
 
 
 class Spell(Card):
-    def __init__(self, name, effect, spellType, spellSpeed):
+    def __init__(self, name, effect, spell_type, spell_speed):
         super().__init__(name, 'spell')
         self.effect = effect
-        self.spellType = spellType
-        self.spellSpeed = spellSpeed
-        self.turnSet = None
+        self.spell_type = spell_type
+        self.spell_speed = spell_speed
+        self.turn_set = None
 
-    def getOptions(self, game, activatedCard):
-        availableOptions = []
+    def get_options(self, game, activated_card):
+        available_options = []
 
-        zoneFull = True
-        for card in self.currentOwner.STZone:
+        zone_full = True
+        for card in self.current_owner.st_zone:
             if card is None:
-                zoneFull = False
+                zone_full = False
 
-        if (zoneFull):
-            return availableOptions
+        if (zone_full):
+            return available_options
 
-        if(self.effect.condition is None or self.effect.checkCondition(game, activatedCard, None)):
-            availableOptions.append('Activate')
+        if(self.effect.condition is None or self.effect.check_condition(game, activated_card, None)):
+            available_options.append('Activate')
 
-        if(self.turnSet is None):
-            availableOptions.append('Set')
+        if(self.turn_set is None):
+            available_options.append('Set')
 
-        return availableOptions
+        return available_options

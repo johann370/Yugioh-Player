@@ -1,8 +1,8 @@
-from card_database import getCard
+from card_database import get_card
 
 
-def createDeck(deckList):
-    with open(deckList) as f:
+def create_deck(deck_list):
+    with open(deck_list) as f:
         lines = f.readlines()
 
     cards = []
@@ -11,6 +11,6 @@ def createDeck(deckList):
         x = line.rstrip('\n').split('x ')
 
         for i in range(int(x[0])):
-            cards.append(getCard(x[1]))
+            cards.append(get_card(x[1]))
 
     return cards

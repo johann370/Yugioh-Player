@@ -1,30 +1,30 @@
 class Field:
     def __init__(self, p1, p2):
-        self.p1MonsterZone = p1.monsterZone
-        self.p2MonsterZone = p2.monsterZone
-        self.extraMonsterZone = [None] * 2
-        self.p1STZone = p1.STZone
-        self.p2STZone = p2.STZone
-        self.p1FieldSpell = p1.fieldSpell
-        self.p2FieldSpell = p2.fieldSpell
+        self.p1_monster_zone = p1.monster_zone
+        self.p2_monster_zone = p2.monster_zone
+        self.extra_monster_zone = [None] * 2
+        self.p1_st_zone = p1.st_zone
+        self.p2_st_zone = p2.st_zone
+        self.p1_field_spell = p1.field_spell
+        self.p2_field_spell = p2.field_spell
 
     def __str__(self) -> str:
         string = ''
 
-        for card in self.p2STZone:
+        for card in self.p2_st_zone:
             if(card is None):
                 string += ' | None'
-            elif(card.faceUp):
+            elif(card.face_up):
                 string += ' | ' + card.name
             else:
                 string += ' | Face Down Card'
 
         string += '\n'
 
-        for monster in self.p2MonsterZone:
+        for monster in self.p2_monster_zone:
             if (monster is None):
                 string += ' | None'
-            elif (monster.faceUp):
+            elif (monster.face_up):
                 string += ' | ' + monster.name + ' (' + monster.position + ')'
             else:
                 string += ' | Face Down Monster' + \
@@ -32,10 +32,10 @@ class Field:
 
         string += '\n-------------------------------------------------------\n'
 
-        for monster in self.p1MonsterZone:
+        for monster in self.p1_monster_zone:
             if (monster is None):
                 string += ' | None'
-            elif (monster.faceUp):
+            elif (monster.face_up):
                 string += ' | ' + monster.name + ' (' + monster.position + ')'
             else:
                 string += ' | Face Down Monster' + \
@@ -43,10 +43,10 @@ class Field:
 
         string += '\n'
 
-        for card in self.p1STZone:
+        for card in self.p1_st_zone:
             if(card is None):
                 string += ' | None'
-            elif(card.faceUp):
+            elif(card.face_up):
                 string += ' | ' + card.name
             else:
                 string += ' | Face Down Card'

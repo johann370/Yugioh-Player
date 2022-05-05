@@ -3,50 +3,50 @@ from summon import summon
 
 
 class Monster(Card):
-    def __init__(self, name, attack, defense, level, monsterType, attribute, effect):
+    def __init__(self, name, attack, defense, level, monster_type, attribute, effect):
         super().__init__(name, "monster")
-        self.originalAttack = attack
+        self.original_attack = attack
         self.attack = attack
-        self.originalDefense = defense
+        self.original_defense = defense
         self.defense = defense
         self.position = None
         self.level = level
-        self.monsterType = monsterType
+        self.monster_type = monster_type
         self.attribute = attribute
-        self.lastTurnPositionChanged = None
-        self.turnSummoned = None
-        self.canDeclareAttack = True
+        self.last_turn_position_changed = None
+        self.turn_summoned = None
+        self.can_declare_attack = True
         self.effect = effect
-        self.hasAttacked = False
+        self.has_attacked = False
 
-    def getOptions(self, game, monster):
-        availableOptions = []
+    def get_options(self, game, monster):
+        available_options = []
 
-        if(game.normalSummonUsed):
-            return availableOptions
+        if(game.normal_summon_used):
+            return available_options
 
-        zoneFull = True
-        numOfMonsters = 0
-        for card in self.currentOwner.monsterZone:
+        zone_full = True
+        num_of_monsters = 0
+        for card in self.current_owner.monster_zone:
             if card is None:
-                zoneFull = False
+                zone_full = False
             else:
-                numOfMonsters += 1
+                num_of_monsters += 1
 
-        if (zoneFull and self.level <= 4):
-            return availableOptions
+        if (zone_full and self.level <= 4):
+            return available_options
 
-        if(self.level <= 4 and self.turnSummoned is None):
-            availableOptions = ['Normal Summon', 'Set Monster']
-        elif(self.level > 4 and self.level < 7 and self.turnSummoned is None and numOfMonsters >= 1):
-            availableOptions = ['Tribute Summon', 'Set Monster']
-        elif(self.level >= 7 and self.turnSummoned is None and numOfMonsters >= 2):
-            availableOptions = ['Tribute Summon', 'Set Monster']
+        if(self.level <= 4 and self.turn_summoned is None):
+            available_options = ['Normal Summon', 'Set Monster']
+        elif(self.level > 4 and self.level < 7 and self.turn_summoned is None and num_of_monsters >= 1):
+            available_options = ['Tribute Summon', 'Set Monster']
+        elif(self.level >= 7 and self.turn_summoned is None and num_of_monsters >= 2):
+            available_options = ['Tribute Summon', 'Set Monster']
 
-        if(not self.faceUp and self.turnSummoned is not None and game.turnCounter != self.turnSummoned):
-            availableOptions = ['Flip Summon']
+        if(not self.face_up and self.turn_summoned is not None and game.turn_counter != self.turn_summoned):
+            available_options = ['Flip Summon']
 
-        if(self.turnSummoned is not None and game.turnCounter != self.lastTurnPositionChanged and self.faceUp):
-            availableOptions = ['Change Battle Position']
+        if(self.turn_summoned is not None and game.turn_counter != self.last_turn_position_changed and self.face_up):
+            available_options = ['Change Battle Position']
 
-        return availableOptions
+        return available_options
