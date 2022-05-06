@@ -82,7 +82,6 @@ def swords_of_revealing_light(game, card, target):
             continue
         if(not monster.face_up):
             mechanics.flip(game, monster)
-
         if(monster.can_declare_attack):
             monster.can_declare_attack = False
             affected_monsters.append(monster)

@@ -39,9 +39,9 @@ class Monster(Card):
         if(self.level <= 4 and self.turn_summoned is None):
             available_options = ['Normal Summon', 'Set Monster']
         elif(self.level > 4 and self.level < 7 and self.turn_summoned is None and num_of_monsters >= 1):
-            available_options = ['Tribute Summon', 'Set Monster']
+            available_options = ['Tribute Summon']
         elif(self.level >= 7 and self.turn_summoned is None and num_of_monsters >= 2):
-            available_options = ['Tribute Summon', 'Set Monster']
+            available_options = ['Tribute Summon']
 
         if(not self.face_up and self.turn_summoned is not None and game.turn_counter != self.turn_summoned):
             available_options = ['Flip Summon']

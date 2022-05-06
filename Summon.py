@@ -1,4 +1,4 @@
-from mechanics import tribute, flip
+from mechanics import tribute, flip, choose_zone
 
 
 def summon(summon_type, monster, game):
@@ -19,25 +19,8 @@ def summon(summon_type, monster, game):
         monster.effect.initial(game, monster, None)
 
 
-def choose_zone(player):
-    available_zones = []
-
-    for i in range(len(player.monster_zone)):
-        if(player.monster_zone[i] is None):
-            available_zones.append(i)
-
-    print(f'Available zones: {available_zones}')
-    zone = int(input('Choose a zone: '))
-
-    while(zone not in available_zones):
-        print(f'Available zones: {available_zones}')
-        zone = int(input('Invalid zone, please choose a zone: '))
-
-    return zone
-
-
 def normal_summon(monster):
-    zone = choose_zone(monster.current_owner)
+    zone = choose_zone(monster.current_owner.monster_zone)
     monster.current_owner.hand.cards.remove(monster)
     monster.position = 'attack'
     monster.face_up = True
@@ -45,7 +28,7 @@ def normal_summon(monster):
 
 
 def set(monster):
-    zone = choose_zone(monster.current_owner)
+    zone = choose_zone(monster.current_owner.monster_zone)
     monster.current_owner.hand.cards.remove(monster)
     monster.position = 'defense'
     monster.face_up = False
@@ -57,31 +40,32 @@ def flip_summon(game, monster):
     flip(game, monster)
 
 
-def tribute_summon(monster):
-    player = monster.current_owner
+def tribute_summon(monster_to_summon):
+    player = monster_to_summon.current_owner
     num_of_tributes = 1
-    if(monster.level >= 7):
+    if(monster_to_summon.level >= 7):
         num_of_tributes = 2
 
     monsters_to_tribute = []
-    available_zones = []
-    for i in range(len(player.monster_zone)):
-        if(player.monster_zone[i] is not None):
-            available_zones.append(i)
+
+    available_tributes = [
+        monster for monster in monster_to_summon.current_owner.monster_zone if monster is not None]
 
     for i in range(num_of_tributes):
-        for i in available_zones:
-            print(f'{i}. {player.monster_zone[i].name}')
+        for idx, monster in enumerate(available_tributes):
+            print(f'{idx}. {monster.name}')
+
         zone_of_tribute = int(input('Choose a monster to tribute: '))
 
-        while(zone_of_tribute not in available_zones):
-            for i in available_zones:
-                print(f'{i}. {player.monster_zone[i].name}')
-            zone_of_tribute = int(
-                input('Invalid zone, please choose a zone: '))
+        while(zone_of_tribute not in range(len(available_tributes))):
+            for idx, monster in enumerate(available_tributes):
+                print(f'{idx}. {monster.name}')
 
-        available_zones.remove(zone_of_tribute)
+            zone_of_tribute = int(
+                input('Invalid monster, please choose a monster to tribute: '))
+
         monster_tribute = player.monster_zone[zone_of_tribute]
+        available_tributes.remove(monster_tribute)
         monsters_to_tribute.append(monster_tribute)
 
     tribute(monsters_to_tribute)
@@ -92,13 +76,13 @@ def tribute_summon(monster):
             input('Choose battle position: \n1. Attack \n2. Defense\n'))
 
     if(position == 1):
-        normal_summon(monster)
+        normal_summon(monster_to_summon)
     elif(position == 2):
-        set(monster)
+        set(monster_to_summon)
 
 
 def special_summon(monster):
-    zone = choose_zone(monster.current_owner)
+    zone = choose_zone(monster.current_owner.monster_zone)
     position = int(input('Choose battle position: \n1. Attack \n2. Defense\n'))
     while(position != 1 and position != 2):
         position = int(

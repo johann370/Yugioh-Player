@@ -29,8 +29,10 @@ def destroy(game, card):
 
 def tribute(cards):
     for card in cards:
-        card.current_owner.monster_zone.remove(card)
+        idx = card.location.index(card)
+        card.location[idx] = None
         card.owner.graveyard.add(card)
+        card.location = card.owner.graveyard.cards
 
 
 def draw(player, num_of_cards):
@@ -81,17 +83,17 @@ def flip(game, monster):
 
 
 def choose_card(options, player):
-    for i in range(len(options)):
-        if(options[i] is not None):
-            if(isinstance(options[i], Player)):
-                print(f'{i}. {options[i].name}')
-            elif(options[i].face_up is None or options[i].face_up or options[i].current_owner == player):
+    for idx, option in enumerate(options):
+        if(option is not None):
+            if(isinstance(option, Player)):
+                print(f'{idx}. {option.name}')
+            elif(option.face_up is None or option.face_up or option.current_owner == player):
                 print(
-                    f'{i}. {options[i].name} ({options[i].current_owner.name})')
-            elif(not options[i].face_up):
-                print(f'{i}. Face Down ({options[i].current_owner.name})')
-        elif(options[i] is None):
-            print(f'{i}. Cancel')
+                    f'{idx}. {option.name} ({option.current_owner.name})')
+            elif(not option.face_up):
+                print(f'{idx}. Face Down ({option.current_owner.name})')
+        elif(option is None):
+            print(f'{idx}. Cancel')
 
     value = int(input('Choose card: '))
 
@@ -156,7 +158,7 @@ def create_chain(game, card, previous_card):
 
 def add_to_chain(game, card, previous_card):
     card.effect.pay_cost()
-    game.chain.addChainLink(card, previous_card)
+    game.chain.add_chain_link(card, previous_card)
 
     response = check_for_response(
         game, card.current_owner.opponent, card.effect.responses, card)
@@ -183,11 +185,7 @@ def target_monster(cards):
 
 
 def choose_zone(zone):
-    available_zones = []
-
-    for i in range(len(zone)):
-        if(zone[i] is None):
-            available_zones.append(i)
+    available_zones = [idx for idx, z in enumerate(zone) if z is None]
 
     print(f'Available zones: {available_zones}')
     zone_num = int(input('Choose a zone: '))

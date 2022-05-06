@@ -33,7 +33,7 @@ class Game():
 
     def test(self):
         self.p1.deck.shuffle()
-        self.p1.deck.draw(5)
+        self.p1.deck.draw(30)
         self.p2.deck.shuffle()
         self.p2.deck.draw(5)
 
@@ -146,10 +146,8 @@ class Game():
                 if(attacker is None):
                     return
 
-                available_targets = []
-                for monster in self.other_player.monster_zone:
-                    if (monster is not None):
-                        available_targets.append(monster)
+                available_targets = [
+                    monster for monster in self.other_player.monster_zone if monster is not None]
 
                 if(not available_targets):
                     available_targets.append(self.other_player)
@@ -162,12 +160,8 @@ class Game():
                 else:
                     self.declare_attack(attacker, target, False)
             elif(val == 2):
-                available_cards = []
-                for card in self.turn_player.st_zone:
-                    if(card is None):
-                        continue
-                    if(card.effect.condition(self, card, None)):
-                        available_cards.append(card)
+                available_cards = [
+                    card for card in self.turn_player.st_zone if card is not None and card.effect.check_condition(self, card, None) and card.spell_speed > 1]
 
                 card_to_activate = mechanics.choose_card(
                     available_cards, self.turn_player)
@@ -199,8 +193,8 @@ class Game():
         options = card.get_options(self, card)
         options.append('Cancel')
         print('Options: ')
-        for i in range(len(options)):
-            print(f'{i}. {options[i]}')
+        for idx, option in enumerate(options):
+            print(f'{idx}. {option}')
         val = int(input('Choose an option: '))
         self.choose_option(card, options[val])
 

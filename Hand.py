@@ -4,5 +4,5 @@ class Hand:
         self.size = size
 
     def print_hand(self):
-        for i in range(len(self.cards)):
-            print(f'{i}. {self.cards[i].name}')
+        for idx, card in enumerate(self.cards):
+            print(f'{idx}. {card.name}')
